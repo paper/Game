@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>pintu</title>
+  <script src="http://cdn.staticfile.org/jquery/1.11.1/jquery.min.js"></script>
+  
+  <link rel="stylesheet" href="pintu.css" />
+  <script src="pintu.js"></script>
+  <style>
+    body{font-family:arial;}
+    .footer{
+      clear:both;
+      font-size:12px;
+      text-align:center;
+      padding:100px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div style="float:left;">
+    <div id="J_paper_pintu" class="paper-pintu"></div>
+  </div>
+  
+  <img src="./img/t1.jpg" alt="" style="float:right;" />
+  
+  <div class="footer">
+    <a href="https://github.com/paper/">Github</a>
+  </div>
+  
+  <script>
+    pintu({
+      imgSrc : "./img/t1.jpg",
+      imgWidth : 300,
+      imgHeight : 300,
+      begin : function(){
+        //console.log("begin");
+      },
+      success : function(){
+        //console.log("success");
+        alert("success");
+      }
+    });
+
+  </script>
+</body>
+</html>

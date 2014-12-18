@@ -1,0 +1,35 @@
+@charset "utf-8";
+
+.paper-pintu,
+.paper-pintu *{
+  margin:0;
+  padding:0;
+}
+.paper-pintu{
+  position:relative;
+  background:url(./img/empty.png);
+  border:2px solid #000;
+}
+.paper-pintu div{
+  position:absolute;
+  background-color:#fff;
+  cursor:pointer;
+  z-index:1;
+  transition: all 0.15s ease 0s;
+}
+.paper-pintu div:hover{
+  opacity:0.9;
+}
+.paper-pintu span{
+  background-color:#444;
+  position:absolute;
+}
+.paper-pintu .last{
+  background:none;
+}
+
+
+
+
+
+
