@@ -1,9 +1,7 @@
 ;(function($){
   
   function arrayIndexOf(r, num){
-    
     if( Array.prototype.indexOf ){
-      //console.log(r);
       return r.indexOf(num);
     }else{
       for(var i=0, len=r.length; i<len; i++){
@@ -23,17 +21,17 @@
   }//end setStyle
   
   /**
-    @x   xè½´æœ€å¤§å€¼
-    @y   yè½´æœ€å¤§å€¼
-    @ret ä»Žå·¦åˆ°å³ï¼Œä»Žä¸Šåˆ°ä¸‹ï¼ŒæŸä¸ªæ•°å­—å‘¨å›´æ•°å­—çš„æ•°ç»„é›†åˆ
+    @x   xÖá×î´óÖµ
+    @y   yÖá×î´óÖµ
+    @ret ´Ó×óµ½ÓÒ£¬´ÓÉÏµ½ÏÂ£¬Ä³¸öÊý×ÖÖÜÎ§Êý×ÖµÄÊý×é¼¯ºÏ
     
-    åˆå§‹åŒ–æ•°å­—èŒƒå›´ã€‚æ•°å­—ä»Ž 0 å¼€å§‹å¡«ï¼Œæ¯”å¦‚ï¼š
+    ³õÊ¼»¯Êý×Ö·¶Î§¡£Êý×Ö´Ó 0 ¿ªÊ¼Ìî£¬±ÈÈç£º
     0,  1,  2,  3,  4,
     5,  6,  7,  8,  9,
     10, 11, 12, 13, 14
     
-    0çš„é™„è¿‘æ˜¯[-1, 5, -1, 1]
-    6çš„é™„è¿‘æ˜¯[1,  11, 5, 7]
+    0µÄ¸½½üÊÇ[-1, 5, -1, 1]
+    6µÄ¸½½üÊÇ[1,  11, 5, 7]
   */
   function getRangeNum(x, y){
     var ret = [],
@@ -44,10 +42,10 @@
       for(j=0; j<x; j++){
       
         temp = [
-          i > 0     ? cur - x : -1,   //ä¸Š
-          i < y - 1 ? cur + x : -1,   //ä¸‹
-          j > 0     ? cur - 1 : -1,   //å·¦
-          j < x - 1 ? cur + 1 : -1    //å³
+          i > 0     ? cur - x : -1,   //ÉÏ
+          i < y - 1 ? cur + x : -1,   //ÏÂ
+          j > 0     ? cur - 1 : -1,   //×ó
+          j < x - 1 ? cur + 1 : -1    //ÓÒ
         ];
         
         ret.push(temp);
@@ -86,11 +84,17 @@
       var frag = document.createDocumentFragment();
       var i, j, div, span;
       
-      for(i = 0; i < y; i++){     //è¡Œ
-        for(j = 0; j < x; j++){   //åˆ—
+      for(i = 0; i < y; i++){     //ÐÐ
+        for(j = 0; j < x; j++){   //ÁÐ
+          
+          //×îºóÒ»¸ñÁô³öÀ´
+          if( i == y-1 && j == x-1 ){ 
+            empty = num;
+            beginEmpty = num;
+            break;
+          }
           
           div = document.createElement("div");
-          div.className = "paper-pintu-block";
           
           var imgx = block * j * -1 + "px";
           var imgy = block * i * -1 + "px";
@@ -102,23 +106,10 @@
             top : block * i + "px",
             background : "url("+ imgSrc +") "+ imgx +" "+ imgy +" no-repeat"
           });
-
-          // æœ€åŽä¸€æ ¼
-          if( i == y-1 && j == x-1 ){ 
-            empty = num;
-            beginEmpty = num;
-            
-            // å…ˆè®¾ç½®éšè—ï¼Œsuccessæ—¶å†æ˜¾ç¤ºå‡ºæ¥
-            setStyle(div, {
-              display : "none"
-            });
-            
-            div.className = "paper-pintu-last-block";
-          }else{
-            div.setAttribute("data-num", num);
-            num++;
-          }
-
+          
+          div.setAttribute("data-num", num);
+          num++;
+          
           frag.appendChild(div);
         }//for
       }//for
@@ -128,13 +119,10 @@
         height : y * block + "px",
       }).append(frag);
       
-      var $blocks = $id.find(".paper-pintu-block");
+      var $blocks = $id.find("div");
       var blocksLength = $blocks.length;
       var ret = getRangeNum(x, y);
       
-      var $lastBlock = $id.find(".paper-pintu-last-block");
-      
-      // æ–¹å—ç§»åŠ¨
       function moveBlock($elem, isHuman){
         if( isHuman && begin ){
           begin();
@@ -149,7 +137,7 @@
           $elem.attr("data-num", empty);
           empty = num;
           
-          //ç§»åŠ¨æ–¹å—
+          //ÒÆ¶¯·½¿é
           switch( direction[i] ){
             case "up"    : $elem.css("top",  parseInt($elem.css("top"),  10) - block + "px"); break;
             case "down"  : $elem.css("top",  parseInt($elem.css("top"),  10) + block + "px"); break;
@@ -161,7 +149,7 @@
         }
       }//end moveBlock
       
-      //éšæœºæ‰“ä¹±å›¾ç‰‡
+      //Ëæ»ú´òÂÒÍ¼Æ¬
       function randomBlocks(){
         var max = 1000;
         var a = 0;
@@ -183,7 +171,7 @@
         fn();
       }//end randomBlocks
       
-      //åˆ¤æ–­æ˜¯å¦æˆåŠŸ
+      //ÅÐ¶ÏÊÇ·ñ³É¹¦
       function checkSuccess(){
         if( empty == beginEmpty){
 
@@ -193,16 +181,13 @@
             }
           }
           
-          $lastBlock.show();
           success();
-        }else{
-          $lastBlock.hide();
         }
       }//end checkSuccess
       
       randomBlocks();
       
-      $id.on("click", ".paper-pintu-block", function(){
+      $id.on("click", "div", function(){
       
         moveBlock($(this), true);
         
