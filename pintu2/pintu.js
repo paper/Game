@@ -1,69 +1,62 @@
-;(function($){
-  
-  function arrayIndexOf(r, num){
-    if( Array.prototype.indexOf ){
+;
+(function ($) {
+  function arrayIndexOf(r, num) {
+    if (Array.prototype.indexOf) {
+      //console.log(r);
       return r.indexOf(num);
-    }else{
-      for(var i=0, len=r.length; i<len; i++){
-        if( r[i] === num ) return i;
+    } else {
+      for (var i = 0, len = r.length; i < len; i++) {
+        if (r[i] === num)
+          return i;
       }
-      
       return -1;
     }
-  }//end arrayIndexOf
+  } //end arrayIndexOf
   
-  function setStyle(elem, obj){
-    for(var i in obj){
-      if( obj.hasOwnProperty(i) ){
+  function setStyle(elem, obj) {
+    for (var i in obj) {
+      if (obj.hasOwnProperty(i)) {
         elem["style"][i] = obj[i];
       }
     }
-  }//end setStyle
+  } //end setStyle
   
   /**
-    @x   xÖá×î´óÖµ
-    @y   yÖá×î´óÖµ
-    @ret ´Ó×óµ½ÓÒ£¬´ÓÉÏµ½ÏÂ£¬Ä³¸öÊý×ÖÖÜÎ§Êý×ÖµÄÊý×é¼¯ºÏ
-    
-    ³õÊ¼»¯Êý×Ö·¶Î§¡£Êý×Ö´Ó 0 ¿ªÊ¼Ìî£¬±ÈÈç£º
-    0,  1,  2,  3,  4,
-    5,  6,  7,  8,  9,
-    10, 11, 12, 13, 14
-    
-    0µÄ¸½½üÊÇ[-1, 5, -1, 1]
-    6µÄ¸½½üÊÇ[1,  11, 5, 7]
-  */
-  function getRangeNum(x, y){
+  @x xè½´æœ€å¤§å€¼
+  @y yè½´æœ€å¤§å€¼
+  @ret ä»Žå·¦åˆ°å³ï¼Œä»Žä¸Šåˆ°ä¸‹ï¼ŒæŸä¸ªæ•°å­—å‘¨å›´æ•°å­—çš„æ•°ç»„é›†åˆ
+  åˆå§‹åŒ–æ•°å­—èŒƒå›´ã€‚æ•°å­—ä»Ž 0 å¼€å§‹å¡«ï¼Œæ¯”å¦‚ï¼š
+  0, 1, 2, 3, 4,
+  5, 6, 7, 8, 9,
+  10, 11, 12, 13, 14
+  0çš„é™„è¿‘æ˜¯[-1, 5, -1, 1]
+  6çš„é™„è¿‘æ˜¯[1, 11, 5, 7]
+   */
+  function getRangeNum(x, y) {
     var ret = [],
-        cur = 0,
-        i, j, temp;
-    
-    for(i=0; i<y; i++){
-      for(j=0; j<x; j++){
-      
+    cur = 0,
+    i,
+    j,
+    temp;
+    for (i = 0; i < y; i++) {
+      for (j = 0; j < x; j++) {
         temp = [
-          i > 0     ? cur - x : -1,   //ÉÏ
-          i < y - 1 ? cur + x : -1,   //ÏÂ
-          j > 0     ? cur - 1 : -1,   //×ó
-          j < x - 1 ? cur + 1 : -1    //ÓÒ
+          i > 0 ? cur - x : -1, //ä¸Š
+          i < y - 1 ? cur + x : -1, //ä¸‹
+          j > 0 ? cur - 1 : -1, //å·¦
+          j < x - 1 ? cur + 1 : -1 //å³
         ];
-        
         ret.push(temp);
-        
         cur++;
-        
-      }//for
-    }//for
-    
+      } //for
+    } //for
     return ret;
-  }//end getRangeNum
+  } //end getRangeNum
   
   var direction = ["up", "down", "left", "right"];
+  var emptyFun = function () {};
   
-  var emptyFun = function(){};
-  
-  function pintu(option){
-    
+  function pintu(option) {
     var imgSrc = option.imgSrc;
     var imgWidth = option.imgWidth;
     var imgHeight = option.imgHeight;
@@ -71,134 +64,129 @@
     var id = option.id || "J_paper_pintu";
     var begin = option.begin || emptyFun;
     var success = option.success || emptyFun;
-    
-    var x = parseInt( imgWidth / block, 10);
-    var y = parseInt( imgHeight / block, 10);
-    
+    var x = parseInt(imgWidth / block, 10);
+    var y = parseInt(imgHeight / block, 10);
     var num = 0;
     var beginEmpty = 0;
     var empty = 0;
     
-    $(function(){
+    $(function () {
       var $id = $("#" + id);
       var frag = document.createDocumentFragment();
       var i, j, div, span;
       
-      for(i = 0; i < y; i++){     //ÐÐ
-        for(j = 0; j < x; j++){   //ÁÐ
-          
-          //×îºóÒ»¸ñÁô³öÀ´
-          if( i == y-1 && j == x-1 ){ 
-            empty = num;
-            beginEmpty = num;
-            break;
-          }
-          
+      for (i = 0; i < y; i++) { //è¡Œ
+        for (j = 0; j < x; j++) { //åˆ—
           div = document.createElement("div");
-          
+          div.className = "paper-pintu-block";
           var imgx = block * j * -1 + "px";
           var imgy = block * i * -1 + "px";
-          
           setStyle(div, {
             width : block + "px",
             height : block + "px",
             left : block * j + "px",
             top : block * i + "px",
-            background : "url("+ imgSrc +") "+ imgx +" "+ imgy +" no-repeat"
+            background : "url(" + imgSrc + ") " + imgx + " " + imgy + " no-repeat"
           });
-          
-          div.setAttribute("data-num", num);
-          num++;
-          
+          // æœ€åŽä¸€æ ¼
+          if (i == y - 1 && j == x - 1) {
+            empty = num;
+            beginEmpty = num;
+            // å…ˆè®¾ç½®éšè—ï¼Œsuccessæ—¶å†æ˜¾ç¤ºå‡ºæ¥
+            setStyle(div, {
+              display : "none"
+            });
+            div.className = "paper-pintu-last-block";
+          } else {
+            div.setAttribute("data-num", num);
+            num++;
+          }
           frag.appendChild(div);
-        }//for
-      }//for
+        } //for
+      } //for
       
       $id.css({
         width : x * block + "px",
         height : y * block + "px",
       }).append(frag);
       
-      var $blocks = $id.find("div");
+      var $blocks = $id.find(".paper-pintu-block");
       var blocksLength = $blocks.length;
       var ret = getRangeNum(x, y);
+      var $lastBlock = $id.find(".paper-pintu-last-block");
       
-      function moveBlock($elem, isHuman){
-        if( isHuman && begin ){
+      // æ–¹å—ç§»åŠ¨
+      function moveBlock($elem, isHuman) {
+        if (isHuman && begin) {
           begin();
           begin = null;
         }
-        
         var num = +$elem.attr("data-num"),
-            rangeNum = ret[num],
-            i = arrayIndexOf(rangeNum, empty);
-
-        if( i > -1 ){
+        rangeNum = ret[num],
+        i = arrayIndexOf(rangeNum, empty);
+        if (i > -1) {
           $elem.attr("data-num", empty);
           empty = num;
-          
-          //ÒÆ¶¯·½¿é
-          switch( direction[i] ){
-            case "up"    : $elem.css("top",  parseInt($elem.css("top"),  10) - block + "px"); break;
-            case "down"  : $elem.css("top",  parseInt($elem.css("top"),  10) + block + "px"); break;
-            case "left"  : $elem.css("left", parseInt($elem.css("left"), 10) - block + "px"); break;
-            case "right" : $elem.css("left", parseInt($elem.css("left"), 10) + block + "px"); break;
+          //ç§»åŠ¨æ–¹å—
+          switch (direction[i]) {
+          case "up":
+            $elem.css("top", parseInt($elem.css("top"), 10) - block + "px");
+            break;
+          case "down":
+            $elem.css("top", parseInt($elem.css("top"), 10) + block + "px");
+            break;
+          case "left":
+            $elem.css("left", parseInt($elem.css("left"), 10) - block + "px");
+            break;
+          case "right":
+            $elem.css("left", parseInt($elem.css("left"), 10) + block + "px");
+            break;
           }
-          
           isHuman && checkSuccess();
         }
-      }//end moveBlock
+      } //end moveBlock
       
-      //Ëæ»ú´òÂÒÍ¼Æ¬
-      function randomBlocks(){
+      //éšæœºæ‰“ä¹±å›¾ç‰‡
+      function randomBlocks() {
         var max = 1000;
         var a = 0;
-        
-        function fn(){
-          if( a++ > max ) return;
-          
+        function fn() {
+          if (a++ > max)
+            return;
           var r = ret[empty];
-          var n = parseInt( Math.random()*4, 10); // 0 - 3
+          var n = parseInt(Math.random() * 4, 10); // 0 - 3
           var m = r[n];
-          
-          if( m != -1 && m < blocksLength ){
-            moveBlock( $blocks.eq(m) );
+          if (m != -1 && m < blocksLength) {
+            moveBlock($blocks.eq(m));
           }
-
           fn();
         }
-        
         fn();
-      }//end randomBlocks
+      } //end randomBlocks
       
-      //ÅÐ¶ÏÊÇ·ñ³É¹¦
-      function checkSuccess(){
-        if( empty == beginEmpty){
-
-          for(var i = 0; i < blocksLength; i++){
-            if( +$blocks.eq(i).attr("data-num") != i ){
+      //åˆ¤æ–­æ˜¯å¦æˆåŠŸ
+      function checkSuccess() {
+        if (empty == beginEmpty) {
+          for (var i = 0; i < blocksLength; i++) {
+            if (+$blocks.eq(i).attr("data-num") != i) {
               return;
             }
           }
-          
+          $lastBlock.show();
           success();
+        } else {
+          $lastBlock.hide();
         }
-      }//end checkSuccess
+      } //end checkSuccess
       
       randomBlocks();
       
-      $id.on("click", "div", function(){
-      
+      $id.on("click", ".paper-pintu-block", function () {
         moveBlock($(this), true);
-        
       });
       
-    });//dom ready
-
-  }//end pintu
+    }); //dom ready
+  } //end pintu
   
   window.pintu = pintu;
-  
 })(jQuery);
-
-
