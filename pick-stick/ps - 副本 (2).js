@@ -1,3 +1,6 @@
+FIP.stopPageDrag();
+
+
 var $window = $(window);
 var canvas = document.getElementById('myCanvas');
 var window_width = $window.width();
@@ -22,14 +25,21 @@ var floor = Math.floor;
 var ceil = Math.ceil;
 var round = Math.round;
 
+// 参数需要整理一下
 
 var canvas_center = {
   x : canvas.width / 2,
   y : canvas.height / 2
 };
 
+// 整个棍子的存储容器
 var stick_store = [];
-var sticksNumber = 10;
+
+// 哪些棍子在最上面的存储容器
+var stick_up_store = [];
+
+// 棍子的数量
+var sticks_number = 30;
 
 // 棍子唯一id
 var _cid = 0;
@@ -41,13 +51,28 @@ var stick_height = 10;
 // 模糊边界，因为眼睛不见得看得那么清楚
 var stick_step = 5;
 
+// 点击生成小圆的半径
+var tab_circle_r = 15;
 
 //游戏是否可以玩的参数
 //为true，说明可以点击
-var canPlayKey = false;
+var canPlayKey = true;
 
+//cr的半径
+var R = tab_circle_r;
 
+// R+height/2  最大允许的距离，超过这个距离就说明没有碰撞 
+var MAXRANGE = R + stick_height/2;
 
+var Game = {
+  reset : function(){
+    
+    stick_store = [];
+    stick_up_store = [];
+    _cid = 0;
+    
+  }
+};
 
 // 清空画布
 function clearCanvas(){
@@ -122,19 +147,18 @@ function degToRad(deg){
 // 得到浮点，可以设置精度
 function getFloat(num){
   return +parseFloat(num, 10).toFixed(3);
-};
+}
 
 /**
   判断一个点是否在容器里面
   在里面就返回true，不在就返回false
 */
 function isInWrap(x,y,w,h){
-  var step = stick_step,
-      w = w - step || window_width - step,
-      h = h - step || window_height - step;
+  w = w - stick_step || window_width - stick_step,
+  h = h - stick_step || window_height - stick_step;
       
   return !(x<=0 || x>=w || y<=0 || y>=h);
-};
+}
 
 
 /**
@@ -165,162 +189,95 @@ function isLineCross(Ax1,Ay1,Ax2,Ay2,Bx1,By1,Bx2,By2){
   return {
     x:x,
     y:y
-  }
+  };
 
-};
+}
 
 
 //比较两个stick是否相交，并且相交点要在容器里面
 //相交返回true，否则返回false
 function compareStick(A, B){
-  var Arad = A.rad,
-    Brad= B.rad,
-    Awidth = stick_width,
-    Bwidth = stick_width,
-    Aheight = stick_height,
-    Bheight = stick_height,
-    Aleft = parseInt(A.style.left),
-    Bleft = parseInt(B.style.left),
-    Atop = parseInt(A.style.top),
-    Btop = parseInt(B.style.top);
+ 
+  return !!isLineCross(A.line.x1, A.line.y1, A.line.x2, A.line.y2, 
+                        B.line.x1, B.line.y1, B.line.x2, B.line.y2);
   
-  //A左右两边中间的坐标
-  var AwidthHalf=Awidth/2,
-    AheightHalf=Aheight/2,
-    
-    //左边
-    ALx=Aleft,
-    ALy=Atop+AheightHalf, 		
-    
-    //右边
-    ARx=Aleft+Awidth,
-    ARy=ALy; 				
-  
-  //旋转之后，A左右两边中间的坐标
-  var cosArad=cos(Arad),sinArad=sin(Arad),
-    ALxx=parseInt( ALx+AwidthHalf-AwidthHalf*cosArad,10 ),
-    ALyy=parseInt( ALy-AwidthHalf*sinArad,10 ),
-    
-    ARxx=parseInt( ARx-AwidthHalf+AwidthHalf*cosArad,10 ),
-    ARyy=parseInt( ARy+AwidthHalf*sinArad,10 );
-  
-  if(A.getAttribute('data-coord')===null){
-    A.setAttribute('data-coord',ALxx+','+ALyy+','+ARxx+','+ARyy);
-  }
-  
-  //旋转之后，A四个角的坐标
-  var ALTx=parseInt( ALxx+AheightHalf*sinArad,10 ),
-    ALTy=parseInt( ALyy-AheightHalf*cosArad,10 ),
-    
-    ALBx=parseInt( ALxx-AheightHalf*sinArad,10 ),
-    ALBy=parseInt( ALyy+AheightHalf*cosArad,10 ),
-    
-    ARTx=parseInt( ARxx+AheightHalf*sinArad,10 ),
-    ARTy=parseInt( ARyy-AheightHalf*cosArad,10 ),
-    
-    ARBx=parseInt( ARxx-AheightHalf*sinArad,10 ),
-    ARBy=parseInt( ARyy+AheightHalf*cosArad,10 );
-    
-  
-  //B左右两边中间的坐标
-  var BwidthHalf=Bwidth/2,
-    BheightHalf=Bheight/2,
-    
-    //左边
-    BLx=Bleft,
-    BLy=Btop+BheightHalf, 		
-    
-    //右边
-    BRx=Bleft+Bwidth,
-    BRy=BLy;
-  
-  //旋转之后，B左右两边中间的坐标
-  var cosBrad=cos(Brad),sinBrad=sin(Brad),
-    BLxx=parseInt( BLx+BwidthHalf-BwidthHalf*cosBrad,10 ),
-    BLyy=parseInt( BLy-BwidthHalf*sinBrad,10 ),
-    
-    BRxx=parseInt( BRx-BwidthHalf+BwidthHalf*cosBrad,10 ),
-    BRyy=parseInt( BRy+BwidthHalf*sinBrad,10 );
-    
-  if (B.getAttribute('data-coord') === null) {
-    B.setAttribute('data-coord', BLxx + ',' + BLyy + ',' + BRxx + ',' + BRyy);
-  }
-  
-  //旋转之后，B四个角的坐标
-  var BLTx=parseInt( BLxx+BheightHalf*sinBrad,10 ),
-      BLTy=parseInt( BLyy-BheightHalf*cosBrad,10 ),
-      
-      BLBx=parseInt( BLxx-BheightHalf*sinBrad,10 ),
-      BLBy=parseInt( BLyy+BheightHalf*cosBrad,10 ),
-      
-      BRTx=parseInt( BRxx+BheightHalf*sinBrad,10 ),
-      BRTy=parseInt( BRyy-BheightHalf*cosBrad,10 ),
-      
-      BRBx=parseInt( BRxx-BheightHalf*sinBrad,10 ),
-      BRBy=parseInt( BRyy+BheightHalf*cosBrad,10 );
-    
-  return !!( isLineCross(ALTx,ALTy,ARTx,ARTy,BLBx,BLBy,BRBx,BRBy) || 
-              isLineCross(ALBx,ALBy,ARBx,ARBy,BLTx,BLTy,BRTx,BRTy) );
-  
-};
+}
 
 // 知道一线中一个点的左边，和相对水平线来说，顺时针的角度
 // 得到包裹它已知容器矩形相交2点的坐标
-function getLineBoxAcrossCoordinate(x,y,rad,w,h){
-  var ret = {}
+// 而且得知，直线不可能是水平（排除了水平状态）
+function getLineBoxAcrossCoordinate(x, y, rad, box_w, box_h){
+  var ret = {};
+  
+  var temp1 = {};
+  var temp2 = [];
   
   if( rad == PI/2 ){
     ret.x1 = x;
     ret.y1 = 0;
     
     ret.x2 = x;
-    ret.y2 = h;
+    ret.y2 = box_h;
     
     return ret;
   }
   
   // 先变换一下坐标系
   x = x;
-  y = h - y;
+  y = box_h - y;
   
   //直线的斜率 [切线与x轴正方向的夹角tanα]
-  var k = tan(rad);
+  var k = tan(PI - rad);
   
   //根据直线的斜截式方程：y=kx+b
-  var b = y - kx;
+  var b = y - k * x;
   
-  /* 直线方程 与 矩形4边 求交点，如果在矩形范围内，就加入ret
-    
+  /* 
+    直线方程 与 矩形4边 求交点，如果在矩形范围内，就加入ret
     A: x = 0
-    B: y = h
-    C: x = w
+    B: y = box_h
+    C: x = box_w
     D: y = 0
-      
     矩形4边直线方程
   */
+
+  // 与4条边延长直线都相交后，会等到4个交点
+  temp1.Ax = 0;
+  temp1.Ay = b;
   
-  // 判断与A相交
+  temp1.Bx = (box_h - b) / k;
+  temp1.By = box_h;
   
+  temp1.Cx = box_w;
+  temp1.Cy = k * box_w + b;
   
-  
-  // if( rad == PI/2 ){
-    // ret.x1 = x;
-    // ret.y1 = 0;
+  temp1.Dx = -b / k;
+  temp1.Dy = 0;
     
-    // ret.x2 = x;
-    // ret.y2 = h;
-  // }else{
-    
-    // if( y > x * tan(rad) ){
-      // ret.x1 = 0;
-      // ret.y1 = y - x * tan(rad);
-      
-      // ret.x2 = w;
-      // ret.y2 = y + (w-x) * tan(rad);
-    // }else if(  )
-    
-  // }
+  // 判断相交的点是否都符合条件（在矩形上面）
+  // 可以肯定的是，必有2个焦点在矩形上面，2个不在
+  if( temp1.Ay >= 0 && temp1.Ay <= box_h ){
+    temp2.push([temp1.Ax, temp1.Ay]);
+  }
   
+  if( temp1.Bx > 0 && temp1.Bx < box_w ){
+    temp2.push([temp1.Bx, temp1.By]);
+  }
+  
+  if( temp1.Cy >=0 && temp1.Cy <= box_h ){
+    temp2.push([temp1.Cx, temp1.Cy]);
+  }
+  
+  if( temp1.Dx > 0 && temp1.Dx < box_w ){
+    temp2.push([temp1.Dx, temp1.Dy]);
+  }
+    
+  // 在把坐标系换回来
+  ret.x1 = temp2[0][0];
+  ret.y1 = box_h - temp2[0][1];
+  
+  ret.x2 = temp2[1][0];
+  ret.y2 = box_h - temp2[1][1];
   
   return ret;
 }
@@ -345,13 +302,13 @@ function Stick(x, y, h, w, deg, n){
   this.center_y = this.y + this.h/2;
   
   //计算棍子和容器相交后，两个点的坐标
-  
+  this.line = getLineBoxAcrossCoordinate(this.center_x, this.center_y, this.rad, canvas.width, canvas.height);
   
   this.id = _cid++;
   
   //存储相交的点
-  this.compare = {};
-};
+  this.compare = [];
+}
 
 Stick.getDefaultData = function(){
   /*
@@ -373,9 +330,10 @@ Stick.getDefaultData = function(){
     y : _.random(h_boundary - stick_height/2, canvas.height - h_boundary - stick_height/2),
     w : stick_width,
     h : stick_height,
-    deg : _.random(1, 179),
+    deg : _.random(1, 179), //排除水平状态。减少判断，而且少一个水平不影响全局
     n : _.random(1, 8)
-  }
+  };
+  
 };
 
 Stick.prototype.draw = function(){
@@ -387,17 +345,35 @@ Stick.prototype.draw = function(){
   
   ctx.shadowOffsetX = 0;
   ctx.shadowOffsetY = 0;
-  ctx.shadowColor = 'rgba(0,0,0,1)';
-  ctx.shadowBlur = 10;
+  ctx.shadowColor = '#000';
+  ctx.shadowBlur = 3;
   
   ctx.fillStyle = getLinearGradientStyle(this.x, this.y, this.x, this.y+this.h, this.n);
   ctx.fillRect(this.x, this.y, this.w, this.h ); 
   
   ctx.restore();
+  
+  return this;
+};
+
+Stick.prototype.reset = function(){
+  this.compare = [];
+  return this;
+};
+
+/**
+  小圆圈（鼠标或手点击时生成）对象
+  
+  @x, @y 分别是小圆圈中心的 x坐标 和 y坐标
+*/
+function TabCircle(x, y){
+  this.x = x;
+  this.y = y;
+  this.r = tab_circle_r;
 }
 
 // 画用户点击后，生成的小圆，用于提示用户是否点击到了目标棍子
-function drawTabCircle(x, y){
+TabCircle.prototype.draw = function(){
   ctx.save();
   
   ctx.shadowOffsetX = 0;
@@ -406,13 +382,13 @@ function drawTabCircle(x, y){
   ctx.shadowBlur = 4;
   
   ctx.beginPath();
-  ctx.arc(x, y, 15, 0, Math.PI * 2, true);
+  ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, true);
   ctx.closePath();
   ctx.fillStyle = 'rgba(0,0,0,0.3)';
   ctx.fill();
   
   ctx.restore();
-}
+};
 
 /**
   左边，宽高，旋转角度，颜色方案
@@ -421,48 +397,219 @@ function drawTabCircle(x, y){
   @max 生成多少组数据
 */
 function createData(num){
-  var stick_store = [];
+  var r = [];
   
   _.times(num, function(){
-    stick_store.push( new Stick() );
+    r.push( new Stick() );
   });
   
-  return stick_store;
+  return r;
 }
 
-// 画上 store 存储的全部棍子
+// 初始化画上 store 存储的全部棍子
+function drawSticksInit( callback ){
+  var r = [];
+  
+  _.each(stick_store, function(stick, i){
+    stick.draw();
+    
+    r.push(stick);
+    
+    if (i !== 0) {
+      for (var j = 0, len = r.length - 1; j < len; j++) {
+        //如果相交
+        if ( compareStick(r[j], stick) ) {
+          r[j].compare.push( stick.id );
+        }
+      }
+    }
+  });
+  
+  callback && callback();
+}
+
+
+/**
+  画stick_store里面的棍子
+*/
 function drawSticks(){
   _.each(stick_store, function(stick){
     stick.draw();
   });
 }
 
-$("#myCanvas").click(function(e){
-    
-  var event_x = e.pageX;
-  var event_y = e.pageY;
-  
-  var myCanvas_x = $("#myCanvas").offset().left;
-  var myCanvas_y = 0;
 
-  // 以免用户点的太快，最小间隔是100ms
-  _.throttle(function(){
+/**
+  canvas 每次画图
+*/
+function canvaDraw(){
+  clearCanvas();
+  
+  drawSticks();
+}
+
+
+/**
+  更新 每个棍子的 compare 属性 即可
+  并返回最上面有哪些棍子的数组
+  
+  @removedStick 被移除的那个棍子(非必须)
+*/
+function upDateStickCompare(removedStick){
+  var aim_id = -1;
+  var ret = [];
+  
+  if( removedStick ){
+    aim_id = removedStick.id;
+  }
+  
+  //移除其他棍子里面的含有 aim_id 的值
+  _.each(stick_store, function(stick){
+    var index = stick.compare.indexOf(aim_id);
+    
+    if( index > -1 ){
+      stick.compare.splice(index, 1);
+    }
+    
+    if( stick.compare.length === 0 ){
+      ret.push(stick);
+    }
+  });
+  
+  return ret;
+}
+
+/**
+  移除这个棍子
+*/
+function removeStick(stick){
+  
+  var id = stick.id;
+  
+  _.find(stick_store, function(stick, i){
+    
+    if( stick.id === id ){
+      stick_store.splice(i, 1);
+      
+      return true;
+    }
+    
+  });
+  
+  stick_up_store = upDateStickCompare(stick);
+}
+
+/**
+  判断tabCircle和stick是否碰撞的细节
+  如果碰到返回true，否则返回false
+  
+  @tabClicle 实例
+  @stick 实例
+*/
+function checkTabCircleDetail(tabClicle, stick){
+  //cr的中心点的坐标
+  var X = tabClicle.x, Y = tabClicle.y;
+
+  var line = stick.line,
+      x1 = line.x1, y1 = line.y1,
+      x2 = line.x2, y2 = line.y2;
+      
+  
+  var x, y;   //圆点到直线的垂直线的相交的那个点。
+  var L;      //圆点到直线的垂直线的距离
+  
+  //首先把直线转化成Ax+By+C=0;求出A,B，C的值，这样方便利用公式
+  var A = y2 - y1,
+      B = x1 - x2,
+      C = y1*x2 - x1*y2;
+  
+  L = getFloat( abs(A*X+B*Y+C)/sqrt(A*A+B*B) );
+  x = getFloat( (B/A*X-Y-C/B)/(B/A+A/B) );
+  
+  console.log(L);
+  
+  if (L < MAXRANGE) {
+    //var xMax = max(x1, x2), xMin = min(x1, x2);
+    
+    //if (x > xMax || x < xMin) return false;
+    
+    return true;
+  }
+  
+  return false; 
+}
+
+
+/**
+  判断tabCircle和stick是否碰撞
+*/
+function checkTabCircle(tabClicle){
+  
+  console.log(tabClicle);
+  
+  _.find(stick_up_store, function(stick){
+    
+    console.log(stick_up_store);
+    
+    
+    // 点中了！
+    if( checkTabCircleDetail(tabClicle, stick) ){
+      
+      removeStick(stick);
+      
+      return true;
+    }
+    
+  });
+}
+
+
+function bindUserClick(){
+  document.getElementById("myCanvas").addEventListener("touchstart", function(e){
+    
+    if( !canPlayKey ) return;
+    
+    var event_x = e.targetTouches[0].pageX;
+    var event_y = e.targetTouches[0].pageY;
+    
+    var myCanvas_x = $("#myCanvas").offset().left;
+    var myCanvas_y = 0;
+    
+    var tab_circle_x = event_x - myCanvas_x;
+    var tab_circle_y = event_y - myCanvas_y;
+
+    // 以免用户点的太快，最小间隔是100ms
     clearCanvas();
     
-    stick_store.pop();
+    var tab_circle = new TabCircle(tab_circle_x, tab_circle_y);
+    
+    //找到点中的那个最上面的棍子，并移除它
+    checkTabCircle(tab_circle);
+
     drawSticks();
-    drawTabCircle(event_x - myCanvas_x, event_y);
-  }, 100)();
-});
+    
+    tab_circle.draw();
+    
+  }, false);
+  
+  // $("#myCanvas").touchdown(function(e){
+    
+    
+  // });
+}
 
 
 //游戏初始化
 function gameInit(){
-  stick_store = createData(sticksNumber);
+  stick_store = createData(sticks_number);
   
-  console.log( stick_store )
+  console.log( stick_store );
   
-  drawSticks();
+  drawSticksInit(function(){
+    stick_up_store = upDateStickCompare();
+    
+    bindUserClick();
+  });
 
 }
 
