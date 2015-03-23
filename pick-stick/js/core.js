@@ -1,12 +1,28 @@
+var STATUS = {
+  BEGIN : 0,
+  
+  INIT : 1,
+  
+  INITEND : 2,
+  
+  START : 3,
+  
+  SUCCESS : 4,
+  
+  REST : 5
+};
 
-
-
-var Game = {  
+var Game = {
+  
+  status : 0,
+  
   init : function(){
+    
+    Game.status = STATUS.INIT;
     
     StickOption.store = Game.createSticksData(StickOption.number);
   
-    console.log( StickOption.store );
+    //console.log( StickOption.store );
     
     Game.initSticksCompare();
     
@@ -15,19 +31,143 @@ var Game = {
     Game.bindUserTouch();
     
     Game.drawSticks();
+    
+    Game.status = STATUS.INITEND;
   },
   
   start : function(){
+    Game.reset();
+    Game.init();
     
+    Game.Score.reset();
+    Game.Time.start();
+    
+    Game.status = STATUS.START;
   },
   
-  success : function(){
-    
+  isSuccess : function(){
+    return Game.status === STATUS.START && StickOption.store.length === 0;
   },
   
-  reset : function(){
+  success : function( callback ){
+    Game.Time.pause();
+    
+    var time = Game.Time.get();
+    var score = Game.Score.get();
+    
+    Game.status = STATUS.SUCCESS;
+    
+    callback && callback(score, time.sec, time.msec);
+  },
+  
+  reset : function( callback ){
+    clearCanvas();
     StickOption.store.length = 0;
     StickOption.up.length = 0;
+    
+    Game.status = STATUS.REST;
+    
+    callback && callback();
+  },
+  
+  /**
+    开始计时
+  */
+  Time : {
+    
+    t : 0,
+    
+    step : 100,
+    
+    key : true,
+    
+    start : function(){
+      var self = this;
+      
+      self.reset();
+      
+      function fn(){
+        setTimeout(function(){
+        
+          if( self.key ){
+            var t,
+                mms,
+                step = self.step;
+            
+            ++self.t;
+            
+            //求秒和秒表
+            t = self.t;
+            mms = step * t;
+
+            var s  = ~~( mms/1000 );
+            var ms = ~~( (mms - s * 1000)/100 );
+            
+            self.set(s, ms);
+          }
+          
+          fn();
+          
+        }, self.step);
+      }
+      
+      fn();
+    },
+    
+    pause : function(){
+      this.key = false;
+    },
+    
+    goon : function(){
+      this.key = true;
+    },
+    
+    get : function(){
+      return {
+        sec : +domElem.time_sec.innerHTML,
+        msec: +domElem.time_msec.innerHTML
+      }
+    },
+    
+    set : function(sec, msec){
+      domElem.time_sec.innerHTML = sec;
+      domElem.time_msec.innerHTML = msec;
+    },
+    
+    reset : function(){
+      this.t = 0;
+      this.set(0, 0);
+    }
+    
+  },
+  
+  Score : {
+    s : 0,
+    
+    increase : function(n){
+      n = n || ++this.s;
+      
+      this.set(n);
+    },
+    
+    reduce : function(n){
+      n = n || --this.s;
+      
+      this.set(n);
+    },
+    
+    get : function(){
+      return +domElem.score.innerHTML;
+    },
+    
+    set : function(n){
+      domElem.score.innerHTML = n;
+    },
+    
+    reset : function(){
+      this.s = 0;
+      this.set(0);
+    }
   },
   
   /**
@@ -151,9 +291,8 @@ var Game = {
   /**
     判断tabCircle和stick是否碰撞
   */
-  checkCircle : function(circle){
-    console.log(circle);
-    console.log(StickOption.up);
+  checkCircle : function(circle, successCallback, failCallback){
+    var k = false;
     
     _.find(StickOption.up, function(stick){
       
@@ -162,18 +301,26 @@ var Game = {
         
         Game.removeStick(stick);
         
+        successCallback && successCallback();
+        
+        k = true;
+        
         return true;
       }
       
     });
+    
+    if( !k ){
+      failCallback && failCallback();
+    }
   },
   
-  bindUserTouch : function(){
-  
+  bindUserTouch : _.once(function(){
+
     canvas.addEventListener(touchClick, function(e){
     
       if( !OtherOption.canPlayKey ) return;
-      
+
       var event_x = isMobile ? e.targetTouches[0].pageX : e.pageX;
       var event_y = isMobile ? e.targetTouches[0].pageY : e.pageY;
       
@@ -188,29 +335,31 @@ var Game = {
       var circle = new TabCircle(circle_x, circle_y);
       
       //找到点中的那个最上面的棍子，并移除它
-      Game.checkCircle(circle);
+      Game.checkCircle(circle, function(){
+        Game.Score.increase();
+      }, function(){
+        Game.Score.reduce();
+      });
 
       Game.drawSticks();
       
       circle.draw();
       
+      if( Game.isSuccess() ){
+        Game.success();
+        
+        clearCanvas();
+        
+        OtherOption.canPlayKey = false;
+      }
+      
     }, false);
     
-  }
+  })
 }
 
 
-var STATUS = Game.STATUS = {
-  INIT : 1,
-  
-  START : 2,
-  
-  SUCCESS : 3,
-  
-  REST : 4
-}
 
-
-Game.init();
+Game.start();
 
 

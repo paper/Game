@@ -1,0 +1,181 @@
+@charset "utf-8";
+
+html, body{
+  position:relative;
+  overflow:hidden;
+  width:100%;
+  height:100%;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.hidden{display:none;}
+
+#myCanvas{
+  background:#fff;
+}
+/*js控制*/
+.z, .page{
+  width: 320px;
+  height:568px;
+}
+.z, .page{
+  position:absolute;
+  top:0;
+  bottom:0;
+  overflow:hidden;
+  background:#FEE31A;
+  
+  transition: all 0.6s ease 0s;
+  -webkit-transition: all 0.6s ease 0s;
+  -moz-transition: all 0.6s ease 0s;
+}
+.z-a{
+  z-index:100;
+}
+.z-b{
+  z-index:99;
+}
+
+.page-menu{
+  height: 32px;
+  padding:0 4px;
+}
+.page-menu .back{
+  float:left;
+  line-height:32px;
+}
+.page-menu .back a{
+  color:#000;
+  font-size:14px;
+}
+.page-menu .back a i{}
+.page-menu .back a span{}
+
+.page-main{
+  padding:14px;
+}
+
+.mod-block{
+  margin-bottom:14px;
+}
+.mod-block .hd{
+  margin-bottom:2px;
+}
+.mod-block .hd h2{
+  font-size:18px;
+}
+.mod-block .bd{
+  margin-left:2px;
+  padding-left:12px;
+  border-left:1px solid #555;
+}
+
+
+
+/*封面*/
+.cover-page-in{
+  position:absolute;
+  width:100%;
+  top:15%;
+  background:url(../images/hmbb.jpg) center top no-repeat;
+}
+
+.cover-page h1 {
+  font-size: 3.5em;
+  text-align: center;
+  color: #A29E62;
+  text-shadow: 0 1px 0 #706E51;
+  margin-top:126px;
+  font-family:Tahoma;
+}
+
+.cover-page .start-game-wrap{
+  text-align:center;
+  margin-top:30px;
+}
+.cover-page .start-game{
+  position:absolute;
+  bottom:100px;
+  left:50%;
+  margin-left:-60px;
+  
+  text-align:center;
+  width:120px;
+  border:1px solid #083F57;
+  border-radius:4px;
+  padding:10px 0;
+  font-size:1.3em;
+  display:inline-block;
+  color:#222;
+  text-shadow:0 1px 0 #ccc;
+  box-shadow:0 1px 0 #eee;
+  -webkit-box-shadow:0 1px 0 #eee;
+  text-decoration:none;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%,  color-stop(0%, #fff), color-stop(2%, #87BEE1),color-stop(3%, #54A2D3), color-stop(100%, #2C74AD));
+  background-image:-moz-linear-gradient(#fff 0%,#87BEE1 2%,#54A2D3 3%,#2C74AD 100%);
+}
+.cover-page .start-game:active{
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%,  color-stop(0%, #fff), color-stop(2%, #87BEE1),color-stop(3%, #2C74AD), color-stop(100%, #54A2D3));
+  background-image:-moz-linear-gradient(#fff 0%,#87BEE1 2%,#2C74AD 3%,#54A2D3 100%);
+}
+
+.cover-page .setting{
+  position:absolute;
+  right:10px;
+  bottom:10px;
+}
+
+
+/*设置*/
+.setting-page{
+  left:320px;
+}
+
+
+/*分数*/
+.score-wrap{
+  position:absolute;
+  right:5px;
+  top:5px;
+  z-index:100;
+}
+
+.time, .score{
+  background-color:rgba(111,111,111,0.3);
+  border:2px solid rgba(1,1,1,0.3);
+  font-family:tahoma;
+}
+
+.time{
+  line-height:1;
+  padding:5px;
+  border-radius:10px;
+  float:left;
+  color:#fff;
+  font-weight:bolder;
+  text-shadow:0 -1px 0 #000;
+  padding:3px 5px;
+  margin-right:-5px;
+}
+.time span{
+  line-height:1;
+  padding:0 2px;
+}
+.score{
+  float:right;
+  width:50px;
+  height:50px;
+  line-height:50px;
+  text-align:center;
+  border-radius:50%;
+  font-size:1.6em;
+  text-shadow:0 1px 0 #fff;
+  color:#333;
+  font-weight:bolder;
+}
+
+
+
+
+
+

@@ -37,9 +37,8 @@ var stopDragPage = function(){
 var canvas = document.getElementById('myCanvas');
 var ctx = canvas.getContext('2d');
 
-canvas.width = window.screen.availWidth;
-canvas.height = window.screen.availHeight;
-
+var windowWidth = canvas.width = window.screen.availWidth;
+var windowHeight = canvas.height = window.screen.availHeight;
 
 /**==================================================
   棍子 设置
@@ -53,7 +52,7 @@ var StickOption = {
   up : [],
   
   // 棍子的数量
-  number : 30,
+  number : 10,
   
   // 棍子唯一id
   _cid : 0,
@@ -90,6 +89,38 @@ var OtherOption = {
 /**==================================================
   基本方法
 =====================================================*/
+
+function show(elem){
+  elem.style.display = "block";
+}
+
+function hide(elem){
+  elem.style.display = "none";
+}
+
+function domReady(func){
+  document.addEventListener('DOMContentLoaded', function(){
+    func && func();
+  }, false);
+}
+
+function setStyle(elem, obj){
+  for(var i in obj){
+    if( obj.hasOwnProperty(i) ){
+      elem[i] = obj[i];
+    }
+  }
+}
+
+//动态加载css
+function loadStyle(cssStr) {
+  var style = document.createElement("style");
+  style.setAttribute('type', 'text/css');
+  style.appendChild(document.createTextNode(cssStr));
+  
+  var wrap = document.head || document.body;
+  wrap.appendChild(style);
+}
 
 function isNumeric(obj){
   return typeof obj === 'number' && obj - parseFloat( obj ) >= 0;
@@ -300,5 +331,138 @@ function getLineBoxAcrossCoordinate(x, y, rad, box_w, box_h){
   
   return ret;
 }
+
+
+/**==================================================
+  页面交互
+=====================================================*/
+
+/*常用dom*/
+var domElem = {
+  za : document.getElementById("J_za"),
+  zb : document.getElementById("J_zb"),
+  
+  cover_page : document.getElementById("J_cover_page"),
+  start_game_btn : document.getElementById("J_start_game_btn"),
+  setting_btn : document.getElementById("J_setting_btn"),
+  
+  setting_page : document.getElementById("J_setting_page"),
+  setting_back_btn : document.getElementById("J_setting_back_btn"),
+  
+  game_success_tip : document.getElementById("J_game_success_tip"),
+  game_again_btn : document.getElementById("J_game_again_btn"),
+  back_to_index_btn : document.getElementById("J_back_to_index_btn"),
+  
+  score_wrap : document.getElementById("J_score_wrap"),
+  time_sec : document.getElementById("J_time_sec"),
+  time_msec : document.getElementById("J_time_msec"),
+  score : document.getElementById("J_score")
+}
+
+/*页面行为*/
+var pageAction = {
+  coverPage : {
+    hide : function(){
+      setStyle(domElem.cover_page, {
+        top : -1 * windowHeight + 'px'
+      });
+    },
+    
+    show : function(){
+      setStyle(domElem.cover_page, {
+        top : 0
+      });
+    }
+  },
+
+  settingPage : {
+    hide : function(){
+      setStyle(domElem.setting_page, {
+        left : -1 * windowWidth + 'px'
+      });
+    },
+    
+    show : function(){
+      setStyle(domElem.setting_page, {
+        left : 0
+      });
+    }
+  },
+
+  zA : {
+    hide : function(){
+      setStyle(domElem.za, {
+        top : -1 * windowHeight + 'px'
+      });
+    },
+    
+    show : function(){
+      setStyle(domElem.za, {
+        top : 0
+      });
+    }
+  },
+  
+  // 游戏成功后
+  gameSuccess : function(){
+    hide(domElem.score_wrap);
+    show(domElem.game_success_tip);
+  },
+  
+  // 再来一次
+  gameAgain : function(){
+    hide(domElem.game_success_tip);
+    show(domElem.score_wrap);
+    
+    Game.start();
+  },
+  
+  // 回到首页 
+  backToIndex : function(){
+    hide(domElem.game_success_tip);
+    show(domElem.score_wrap);
+    
+    this.zA.show();
+  }
+}
+
+
+
+domElem.start
+
+document.getElementById("J_start_game").addEventListener(touchClick, function(e){
+  
+  document.querySelector(".z-a").style.top = -1 * windowHeight + "px";
+  
+  Game.start();
+  
+}, false);
+
+
+document.getElementById("J_setting").addEventListener(touchClick, function(e){
+  
+  document.querySelector(".setting-page").style.left = "0";
+  
+}, false);
+
+
+document.querySelector(".page-menu .back a").addEventListener(touchClick, function(e){
+  
+  var p = "#" + this.getAttribute("data-p");
+  
+  document.querySelector(p).style.left = windowWidth + "px"
+  
+}, false);
+
+
+
+
+
+
+
+
+
+
+
 
 
