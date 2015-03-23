@@ -1,6 +1,7 @@
 
-var Game = {
-  
+
+
+var Game = {  
   init : function(){
     
     StickOption.store = Game.createSticksData(StickOption.number);
@@ -16,11 +17,18 @@ var Game = {
     Game.drawSticks();
   },
   
-  start : function(){},
+  start : function(){
+    
+  },
   
-  success : function(){},
+  success : function(){
+    
+  },
   
-  reset : function(){},
+  reset : function(){
+    StickOption.store.length = 0;
+    StickOption.up.length = 0;
+  },
   
   /**
     @num 生成num个棍子
@@ -190,6 +198,18 @@ var Game = {
     
   }
 }
+
+
+var STATUS = Game.STATUS = {
+  INIT : 1,
+  
+  START : 2,
+  
+  SUCCESS : 3,
+  
+  REST : 4
+}
+
 
 Game.init();
 

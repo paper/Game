@@ -37,8 +37,8 @@ var stopDragPage = function(){
 var canvas = document.getElementById('myCanvas');
 var ctx = canvas.getContext('2d');
 
-canvas.width = document.documentElement.scrollWidth;
-canvas.height = document.documentElement.scrollHeight;
+canvas.width = window.screen.availWidth;
+canvas.height = window.screen.availHeight;
 
 
 /**==================================================
