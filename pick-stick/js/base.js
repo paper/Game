@@ -90,6 +90,20 @@ var OtherOption = {
   基本方法
 =====================================================*/
 
+var myStore = {
+  set : function(name, value){
+    localStorage.setItem(name, value.toString());
+  },
+  
+  get : function(name){
+    return localStorage.getItem(name);
+  },
+  
+  del : function(name){
+    localStorage.removeItem(name);
+  }
+}
+
 function show(elem){
   elem.style.display = "block";
 }
@@ -107,7 +121,7 @@ function domReady(func){
 function setStyle(elem, obj){
   for(var i in obj){
     if( obj.hasOwnProperty(i) ){
-      elem[i] = obj[i];
+      elem['style'][i] = obj[i];
     }
   }
 }
@@ -378,7 +392,7 @@ var pageAction = {
   settingPage : {
     hide : function(){
       setStyle(domElem.setting_page, {
-        left : -1 * windowWidth + 'px'
+        left : windowWidth + 'px'
       });
     },
     
@@ -405,7 +419,6 @@ var pageAction = {
   
   // 游戏成功后
   gameSuccess : function(){
-    hide(domElem.score_wrap);
     show(domElem.game_success_tip);
   },
   
@@ -419,39 +432,49 @@ var pageAction = {
   
   // 回到首页 
   backToIndex : function(){
+    this.zA.show();
+    
     hide(domElem.game_success_tip);
     show(domElem.score_wrap);
-    
-    this.zA.show();
   }
 }
 
+// 重置一些样式
+loadStyle('\
+  .z, .page{\
+    width: '+ windowWidth +'px;\
+    height:'+ windowHeight +'px;\
+  }\
+  .setting-page{\
+    left:'+ windowWidth +'px;\
+  }\
+');
 
-
-domElem.start
-
-document.getElementById("J_start_game").addEventListener(touchClick, function(e){
-  
-  document.querySelector(".z-a").style.top = -1 * windowHeight + "px";
+// 开始游戏
+domElem.start_game_btn.addEventListener(touchClick, function(e){
+  pageAction.zA.hide();
   
   Game.start();
-  
 }, false);
 
-
-document.getElementById("J_setting").addEventListener(touchClick, function(e){
-  
-  document.querySelector(".setting-page").style.left = "0";
-  
+// 打开设置
+domElem.setting_btn.addEventListener(touchClick, function(e){
+  pageAction.settingPage.show();
 }, false);
 
+// 关闭设置
+domElem.setting_back_btn.addEventListener(touchClick, function(e){
+  pageAction.settingPage.hide();
+}, false);
 
-document.querySelector(".page-menu .back a").addEventListener(touchClick, function(e){
-  
-  var p = "#" + this.getAttribute("data-p");
-  
-  document.querySelector(p).style.left = windowWidth + "px"
-  
+// 再来一局
+domElem.game_again_btn.addEventListener(touchClick, function(e){
+  pageAction.gameAgain();
+}, false);
+
+// 返回首页
+domElem.back_to_index_btn.addEventListener(touchClick, function(e){
+  pageAction.backToIndex();
 }, false);
 
 

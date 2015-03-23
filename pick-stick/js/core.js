@@ -1,24 +1,26 @@
-var STATUS = {
-  BEGIN : 0,
-  
-  INIT : 1,
-  
-  INITEND : 2,
-  
-  START : 3,
-  
-  SUCCESS : 4,
-  
-  REST : 5
-};
-
 var Game = {
   
   status : 0,
   
+  STATUS : {
+    BEGIN : 0,
+    
+    INIT : 1,
+    
+    INITEND : 2,
+    
+    START : 3,
+    
+    SUCCESS : 4,
+    
+    REST : 5
+  },
+  
   init : function(){
     
-    Game.status = STATUS.INIT;
+    Game.status = Game.STATUS.INIT;
+    
+    OtherOption.canPlayKey = true;
     
     StickOption.store = Game.createSticksData(StickOption.number);
   
@@ -32,21 +34,20 @@ var Game = {
     
     Game.drawSticks();
     
-    Game.status = STATUS.INITEND;
+    Game.status = Game.STATUS.INITEND;
   },
   
   start : function(){
     Game.reset();
     Game.init();
     
-    Game.Score.reset();
     Game.Time.start();
     
-    Game.status = STATUS.START;
+    Game.status = Game.STATUS.START;
   },
   
   isSuccess : function(){
-    return Game.status === STATUS.START && StickOption.store.length === 0;
+    return Game.status === Game.STATUS.START && StickOption.store.length === 0;
   },
   
   success : function( callback ){
@@ -55,7 +56,7 @@ var Game = {
     var time = Game.Time.get();
     var score = Game.Score.get();
     
-    Game.status = STATUS.SUCCESS;
+    Game.status = Game.STATUS.SUCCESS;
     
     callback && callback(score, time.sec, time.msec);
   },
@@ -65,7 +66,10 @@ var Game = {
     StickOption.store.length = 0;
     StickOption.up.length = 0;
     
-    Game.status = STATUS.REST;
+    Game.Score.reset();
+    Game.Time.reset();
+    
+    Game.status = Game.STATUS.REST;
     
     callback && callback();
   },
@@ -74,52 +78,48 @@ var Game = {
     开始计时
   */
   Time : {
-    
-    t : 0,
-    
     step : 100,
     
+    n : 0,
     key : true,
+    status : 3,
+    t : null,
+    
+    STATUS : {
+      START : 1,
+      PAUSE : 2,
+      RESET : 3
+    },
     
     start : function(){
       var self = this;
       
       self.reset();
       
-      function fn(){
-        setTimeout(function(){
-        
-          if( self.key ){
-            var t,
-                mms,
-                step = self.step;
-            
-            ++self.t;
-            
-            //求秒和秒表
-            t = self.t;
-            mms = step * t;
-
-            var s  = ~~( mms/1000 );
-            var ms = ~~( (mms - s * 1000)/100 );
-            
-            self.set(s, ms);
-          }
-          
-          fn();
-          
-        }, self.step);
-      }
+      self.status = self.STATUS.START;
       
-      fn();
+      self.t = setInterval(function(){
+        if( self.key && self.status === self.STATUS.START ){
+          ++self.n;
+          
+          //求秒和秒表
+          var mms = self.step * self.n;
+          var s  = ~~( mms/1000 );
+          var ms = ~~( (mms - s * 1000)/100 );
+          
+          self.set(s, ms);
+        }
+      }, self.step);
     },
     
     pause : function(){
       this.key = false;
+      this.status = this.STATUS.PAUSE;
     },
     
     goon : function(){
       this.key = true;
+      this.status = this.STATUS.START;
     },
     
     get : function(){
@@ -135,8 +135,12 @@ var Game = {
     },
     
     reset : function(){
-      this.t = 0;
+      this.n = 0;
+      this.key = true;
+      clearInterval(this.t);
+      
       this.set(0, 0);
+      this.status = this.STATUS.RESET;
     }
     
   },
@@ -351,6 +355,8 @@ var Game = {
         clearCanvas();
         
         OtherOption.canPlayKey = false;
+        
+        pageAction.gameSuccess();
       }
       
     }, false);
@@ -358,8 +364,6 @@ var Game = {
   })
 }
 
-
-
-Game.start();
+//Game.start();
 
 

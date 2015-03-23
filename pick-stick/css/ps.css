@@ -13,11 +13,7 @@ html, body{
 #myCanvas{
   background:#fff;
 }
-/*js控制*/
-.z, .page{
-  width: 320px;
-  height:568px;
-}
+
 .z, .page{
   position:absolute;
   top:0;
@@ -25,9 +21,9 @@ html, body{
   overflow:hidden;
   background:#FEE31A;
   
-  transition: all 0.6s ease 0s;
-  -webkit-transition: all 0.6s ease 0s;
-  -moz-transition: all 0.6s ease 0s;
+  transition: all 0.5s ease 0s;
+  -webkit-transition: all 0.5s ease 0s;
+  -moz-transition: all 0.5s ease 0s;
 }
 .z-a{
   z-index:100;
@@ -126,10 +122,7 @@ html, body{
 }
 
 
-/*设置*/
-.setting-page{
-  left:320px;
-}
+/*游戏设置*/
 
 
 /*分数*/
@@ -175,7 +168,12 @@ html, body{
 }
 
 
-
+.game-success-tip{
+  position: absolute;
+  width: 100%;
+  top: 40%;
+  text-align: center;
+}
 
 
 
