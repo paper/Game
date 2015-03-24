@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="css/reset.css">
   <link rel="stylesheet" href="css/ps.css">
   <script src="js/underscore.min.js"></script>
-  
+  <script src="js/zepto.min-1.1.4.js"></script>
 </head>
 <body>
   
@@ -65,16 +65,16 @@
               </div>
             </div>
             
-            <div class="mod-block">
+            <div class="mod-block" id="J_difficulty_setting">
               <div class="hd">
                 <h2>难度设置</h2>
               </div>
               <div class="bd">
                 
                 <div class="btn-group">
-                  <button type="button" class="btn btn-default btn-cur">简易</button>
-                  <button type="button" class="btn btn-default">普通</button>
-                  <button type="button" class="btn btn-default">噩梦</button>
+                  <button data-hard="10" type="button" class="btn btn-default btn-cur">简易</button>
+                  <button data-hard="30" type="button" class="btn btn-default">普通</button>
+                  <button data-hard="50" type="button" class="btn btn-default">噩梦</button>
                 </div>
                 
               </div>
@@ -91,7 +91,7 @@
     <div class="z z-b" id="J_zb">
     
       <!--游戏-->
-      <div class="game">
+      <div class="game-page page">
         
         <div class="game-success-tip hidden" id="J_game_success_tip">
           <button id="J_game_again_btn">再来一局</button>

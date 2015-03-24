@@ -24,25 +24,6 @@ var isMobile = (function(){
 
 var touchClick = isMobile ? 'touchstart' : 'click';
 
-// 禁止页面滚动
-var stopDragPage = function(){
-  document.addEventListener('touchmove', function(e){
-    e.preventDefault();
-  }, false);
-}
-
-// 隐藏导航栏
-var hideURLbar = function( callback ){
-	setTimeout(function(){
-		window.scrollTo(0, 1);
-    
-    callback && callback();
-	},0);
-};
-
-window.addEventListener('load',function(){
-  hideURLbar();
-},false);
 
 /**==================================================
   canvas 设置
@@ -50,8 +31,8 @@ window.addEventListener('load',function(){
 var canvas = document.getElementById('myCanvas');
 var ctx = canvas.getContext('2d');
 
-var windowWidth = canvas.width = window.screen.availWidth;
-var windowHeight = canvas.height = window.screen.availHeight;
+var windowWidth = canvas.width = document.body.clientWidth;
+var windowHeight = canvas.height = document.body.clientHeight;
 
 /**==================================================
   棍子 设置
@@ -102,20 +83,64 @@ var OtherOption = {
 /**==================================================
   基本方法
 =====================================================*/
-
-var myStore = {
+var myCookie = {
   set : function(name, value){
-    localStorage.setItem(name, value.toString());
+    var day = 30;
+    var exp = new Date();
+    exp.setTime(exp.getTime() + day*24*60*60*1000);
+    document.cookie = name + "=" + escape (value) + ";expires=" + exp.toGMTString();
   },
   
   get : function(name){
-    return localStorage.getItem(name);
+    var arrStr = document.cookie.split("; ");
+    var i = 0, len = arrStr.length;
+    for(; i < len; i++){
+      var temp = arrStr[i].split("=");
+      if(temp[0] == name) return unescape(temp[1]);
+    }
   },
-  
+
   del : function(name){
-    localStorage.removeItem(name);
+    var exp = new Date();
+    exp.setTime(exp.getTime() - 1);
+    var cval = this.get(name);
+    if(typeof cval != "undefined") document.cookie = name + "=" + cval + ";expires=" + exp.toGMTString();
   }
-}
+};
+
+var myStore = (function(){
+  if( window.localStorage ){
+    return {
+      set : function(name, value){
+        localStorage.setItem(name, value.toString());
+      },
+      
+      get : function(name){
+        return localStorage.getItem(name);
+      },
+      
+      del : function(name){
+        localStorage.removeItem(name);
+      }
+    };
+    
+  }else{
+    return {
+      set : function(name, value){
+        myCookie.set(name, value.toString());
+      },
+      
+      get : function(name){
+        return myCookie.get(name);
+      },
+      
+      del : function(name){
+        myCookie.del(name);
+      }
+    };
+  }
+  
+})();
 
 function show(elem){
   elem.style.display = "block";
@@ -128,6 +153,13 @@ function hide(elem){
 function domReady(func){
   document.addEventListener('DOMContentLoaded', function(){
     func && func();
+  }, false);
+}
+
+// 禁止页面滚动
+function stopDragPage(){
+  document.addEventListener('touchmove', function(e){
+    e.preventDefault();
   }, false);
 }
 
@@ -471,7 +503,40 @@ setTimeout(function(){
       -moz-transition: all 0.5s ease 0s;\
     }\
   ');
-}, 1000);
+}, 100);
+
+
+// 游戏难度设置
+var GameDifficultySetting = {
+  $btns : $("#J_difficulty_setting .btn-default"),
+  
+  hard : myStore.get('pick-stick-hard') || StickOption.number,
+  
+  init : function(){
+    var self = this;
+    
+    self.$btns.click(function(){
+      self.$btns.removeClass("btn-cur");
+      $(this).addClass("btn-cur");
+      
+      var hard = +$(this).attr("data-hard");
+      
+      StickOption.number = hard;
+      myStore.set('pick-stick-hard', hard);
+    });
+    
+    self.$btns.removeClass("btn-cur");
+    
+    self.$btns.each(function(){
+      if( $(this).attr("data-hard") == self.hard ){
+        $(this).addClass("btn-cur");
+      }
+    });
+    
+  }
+}
+
+GameDifficultySetting.init();
 
 
 // 开始游戏
@@ -500,9 +565,6 @@ domElem.game_again_btn.addEventListener(touchClick, function(e){
 domElem.back_to_index_btn.addEventListener(touchClick, function(e){
   pageAction.backToIndex();
 }, false);
-
-
-
 
 
 
