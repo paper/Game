@@ -24,12 +24,25 @@ var isMobile = (function(){
 
 var touchClick = isMobile ? 'touchstart' : 'click';
 
+// 禁止页面滚动
 var stopDragPage = function(){
   document.addEventListener('touchmove', function(e){
     e.preventDefault();
   }, false);
 }
 
+// 隐藏导航栏
+var hideURLbar = function( callback ){
+	setTimeout(function(){
+		window.scrollTo(0, 1);
+    
+    callback && callback();
+	},0);
+};
+
+window.addEventListener('load',function(){
+  hideURLbar();
+},false);
 
 /**==================================================
   canvas 设置
@@ -449,6 +462,17 @@ loadStyle('\
     left:'+ windowWidth +'px;\
   }\
 ');
+
+setTimeout(function(){
+  loadStyle('\
+    .z, .page{\
+      transition: all 0.5s ease 0s;\
+      -webkit-transition: all 0.5s ease 0s;\
+      -moz-transition: all 0.5s ease 0s;\
+    }\
+  ');
+}, 1000);
+
 
 // 开始游戏
 domElem.start_game_btn.addEventListener(touchClick, function(e){
