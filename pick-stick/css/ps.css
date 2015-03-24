@@ -9,6 +9,10 @@ html, body{
   -webkit-user-select : none;
   -webkit-touch-callout : none;
 }
+a,a:focus{
+  outline:none;
+  border:0 none;
+}
 .hidden{display:none;}
 
 #myCanvas{

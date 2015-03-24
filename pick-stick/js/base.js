@@ -515,6 +515,8 @@ var GameDifficultySetting = {
   init : function(){
     var self = this;
     
+    StickOption.number = self.hard;
+    
     self.$btns.click(function(){
       self.$btns.removeClass("btn-cur");
       $(this).addClass("btn-cur");
@@ -532,6 +534,8 @@ var GameDifficultySetting = {
         $(this).addClass("btn-cur");
       }
     });
+    
+    
     
   }
 }
