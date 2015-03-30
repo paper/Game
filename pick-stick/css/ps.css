@@ -9,10 +9,7 @@ html, body{
   -webkit-user-select : none;
   -webkit-touch-callout : none;
 }
-a,a:focus{
-  outline:none;
-  border:0 none;
-}
+
 .hidden{display:none;}
 
 #myCanvas{
@@ -68,6 +65,26 @@ a,a:focus{
 }
 
 
+/*按钮*/
+.btn{
+  display:inline-block;
+  border-radius:30px;
+  height:34px;
+  line-height:34px;
+  width:130px;
+  font-size:14px;
+  border:0 none;
+  box-sizing: border-box;
+}
+.btn-hollow{
+  background-color:#fff;
+  color:#22BB62;
+  border:1px solid #22BB62;
+}
+.btn-solid{
+  background-color:#22BB62;
+  color:#fff;
+}
 
 /*封面*/
 .cover-page-in{
@@ -135,12 +152,7 @@ a,a:focus{
   background-color:#fff;
 }
 
-.game-success-tip{
-  position: absolute;
-  width: 100%;
-  top: 40%;
-  text-align: center;
-}
+
 
 /*分数*/
 .score-wrap{
@@ -182,6 +194,75 @@ a,a:focus{
   color:#333;
   font-weight:bolder;
 }
+
+/*游戏结束时的提示*/
+.game-success-tip{
+  height:100%;
+}
+
+.game-success-tip-box{
+  border: 4px solid #1B984F;
+  width: 86%;
+  margin: 0 auto;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  border-radius: 20px;
+  overflow: hidden;
+}
+.game-success-tip-box-hd{
+  background-color:#22BB62;
+}
+.game-success-tip-box-hd h4{
+  text-align:center;
+  color:#fff;
+  height: 50px;
+  line-height: 50px;
+  font-size: 24px;
+}
+.game-success-tip-box-bd{
+  padding: 14px 10px;
+  background-color: #fff;
+}
+.game-success-tip-box-bd .game-data{
+  padding: 10px 0 20px;
+}
+.game-success-tip-box-bd .game-data ul{
+  overflow:hidden;
+}
+.game-success-tip-box-bd .game-data ul li{
+  float:left;
+  text-align:center;
+  width:50%;
+  font-size:28px;
+}
+.game-success-tip-box-bd .game-data ul li h6{}
+.game-success-tip-box-bd .game-data ul li p{}
+
+.game-success-tip-box-bd .btn-wrap{
+  text-align:center;
+  overflow:hidden;
+}
+.game-success-tip-box-bd .btn-wrap div{
+  width:50%;
+  float:left;
+  text-align:center;
+}
+.game-success-tip-box-bd .btn-wrap .btn{
+  width:90%;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
   <meta name="format-detection" content="telephone=no" />
   
+  <link href='http://www.youziku.com/webfont/NameCSS/30419' rel='stylesheet' type='text/css'/>
+  
   <link rel="stylesheet" href="css/reset.css">
   <link rel="stylesheet" href="css/ps.css">
   <script src="js/underscore.min.js"></script>
@@ -94,9 +96,37 @@
       <div class="game-page page">
         
         <div class="game-success-tip hidden" id="J_game_success_tip">
-          <button id="J_game_again_btn">再来一局</button>
           
-          <button id="J_back_to_index_btn">返回首页</button>
+          <div class="game-success-tip-box">
+            <div class="game-success-tip-box-hd">
+              <h4 class="css30419">Victory</h4>
+            </div>
+            
+            <div class="game-success-tip-box-bd">
+              <div class="game-data">
+                <ul>
+                  <li>
+                    <h6>Score</h6>
+                    <p>20<strong>/30</strong></p>
+                  </li>
+                  <li>
+                    <h6>Time</h6>
+                    <p>114.6s</p>
+                  </li>
+                </ul>
+              </div>
+              
+              <div class="btn-wrap">
+                <div><span id="J_back_to_index_btn" class="btn btn-hollow">Home</span></div>
+                <div><span id="J_game_again_btn" class="btn btn-solid">Again</span></div>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+          
+          
         </div>
         
         <div class="score-wrap" id="J_score_wrap">
