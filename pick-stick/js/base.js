@@ -48,6 +48,20 @@ var StickOption = {
   // 棍子的数量
   number : 2,
   
+  //hardType : [ ['easy', 2], ['normal', 30], ['hard', 50] ],
+  
+  hardType : {
+    'easy' : 2,
+    'normal' : 5,
+    'hard' : 10
+  },
+  
+  hardTypeMsg : {
+    'easy' : '简易',
+    'normal' : '困难',
+    'hard' : '噩梦'
+  },
+  
   // 棍子唯一id
   _cid : 0,
   
@@ -83,6 +97,16 @@ var OtherOption = {
 /**==================================================
   基本方法
 =====================================================*/
+
+var requestAnimFrame = (function(){
+  return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        function(callback){
+            setTimeout(callback, 1000 / 60);
+        };
+})();
+
 var myCookie = {
   set : function(name, value){
     var day = 30;
@@ -142,6 +166,22 @@ var myStore = (function(){
   
 })();
 
+function getHard(){
+  return myStore.get('pick-stick-hard') || StickOption.number;
+}
+
+function setHard(hard){
+  myStore.set('pick-stick-hard', hard);
+}
+
+function getHardType(){
+  return myStore.get('pick-stick-hardType') || 'easy';
+}
+
+function setHardType(type){
+  myStore.set('pick-stick-hardType', type);
+}
+
 function show(elem){
   elem.style.display = "block";
 }
@@ -185,7 +225,7 @@ function isNumeric(obj){
   return typeof obj === 'number' && obj - parseFloat( obj ) >= 0;
 }
 
-function clearCanvas(){
+function clearCanvas(context){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
@@ -382,12 +422,16 @@ function getLineBoxAcrossCoordinate(x, y, rad, box_w, box_h){
   }
     
   // 在把坐标系换回来
-  ret.x1 = temp2[0][0];
-  ret.y1 = box_h - temp2[0][1];
+  if( temp2[0] ){
+    ret.x1 = temp2[0][0];
+    ret.y1 = box_h - temp2[0][1];
+  }
   
-  ret.x2 = temp2[1][0];
-  ret.y2 = box_h - temp2[1][1];
-  
+  if( temp2[1] ){
+    ret.x2 = temp2[1][0];
+    ret.y2 = box_h - temp2[1][1];
+  }
+
   return ret;
 }
 
@@ -404,6 +448,7 @@ var domElem = {
   cover_page : document.getElementById("J_cover_page"),
   start_game_btn : document.getElementById("J_start_game_btn"),
   setting_btn : document.getElementById("J_setting_btn"),
+  $setting_btn_ico : $("#J_setting_btn .ico-setting"),
   
   setting_page : document.getElementById("J_setting_page"),
   setting_back_btn : document.getElementById("J_setting_back_btn"),
@@ -413,9 +458,15 @@ var domElem = {
   back_to_index_btn : document.getElementById("J_back_to_index_btn"),
   
   score_wrap : document.getElementById("J_score_wrap"),
+  $time : $('#J_score_wrap .time'),
   time_sec : document.getElementById("J_time_sec"),
   time_msec : document.getElementById("J_time_msec"),
-  score : document.getElementById("J_score")
+  score : document.getElementById("J_score"),
+  
+  $tipBox : $('.game-success-tip-box'),
+  $tipBoxScore : $('.game-success-tip-box .game-data .score-item p span'),
+  $tipBoxHard : $('.game-success-tip-box .game-data .score-item p strong'),
+  $tipBoxTime : $('.game-success-tip-box .game-data .time-item p')
 }
 
 /*页面行为*/
@@ -461,15 +512,84 @@ var pageAction = {
       });
     }
   },
+
+  gameSuccessTip : {    
+    record : function(hardType, stick, time){
+      stick = stick || 0;
+      time = time || 0;
+      
+      var $p = $('#J_my_score').find('.'+hardType);
+      
+      var history_time =  +myStore.get('pick-stick-hardType-' + hardType + '-time') || 0;
+      var history_stick = +myStore.get('pick-stick-hardType-' + hardType + '-stick') || 0;
+      
+      var nice_time = history_time;
+      var nice_stick = history_stick;
+      
+      if( stick > history_stick ){
+        nice_stick = stick;
+        nice_time = time;
+      }else if( stick == history_stick ){
+        nice_stick = stick;
+        
+        if( time < history_time ){
+          nice_time = time;
+        }
+      }
+      
+      $p.html( StickOption.hardTypeMsg[hardType]+'：'+ nice_stick +'棍 / '+ nice_time +'秒' );
+      
+      myStore.set('pick-stick-hardType-' + hardType + '-stick', nice_stick);
+      myStore.set('pick-stick-hardType-' + hardType + '-time', nice_time);
+    },
+    
+    show : function(){
+      var self = this;
+      
+      // 记录成绩
+      var hardType = getHardType();
+      var time = $.trim( domElem.$time.text() );
+      var stick = domElem.score.innerHTML;
+      
+      domElem.$tipBoxHard.html(  getHard() );
+      domElem.$tipBoxScore.html( domElem.score.innerHTML );
+      
+      domElem.$tipBoxTime.html( time );
+      
+      // 判断并写入最佳成绩
+      self.record( hardType, stick, parseFloat(time));
+      
+      show(domElem.game_success_tip);
+      setTimeout(function(){
+        domElem.$tipBox.addClass('game-success-tip-box-show');
+      }, 10);
+    },
+    
+    hide : function(){
+      hide(domElem.game_success_tip);
+      domElem.$tipBox.removeClass('game-success-tip-box-show');
+    }
+  },
+  
+  recordInit : function(){
+    var self = this;
+    
+    for(var i in StickOption.hardType){
+      if( StickOption.hardType.hasOwnProperty(i) ){
+        self.gameSuccessTip.record(i);
+      }
+    }
+  },
   
   // 游戏成功后
   gameSuccess : function(){
-    show(domElem.game_success_tip);
+    this.gameSuccessTip.show();
   },
   
   // 再来一次
   gameAgain : function(){
-    hide(domElem.game_success_tip);
+    this.gameSuccessTip.hide();
+    
     show(domElem.score_wrap);
     
     Game.start();
@@ -483,6 +603,8 @@ var pageAction = {
     show(domElem.score_wrap);
   }
 }
+
+pageAction.recordInit();
 
 // 重置一些样式
 loadStyle('\
@@ -498,9 +620,9 @@ loadStyle('\
 setTimeout(function(){
   loadStyle('\
     .z, .page{\
-      transition: all 0.5s ease 0s;\
-      -webkit-transition: all 0.5s ease 0s;\
-      -moz-transition: all 0.5s ease 0s;\
+      transition: all 0.3s ease 0s;\
+      -webkit-transition: all 0.3s ease 0s;\
+      -moz-transition: all 0.3s ease 0s;\
     }\
   ');
 }, 100);
@@ -508,35 +630,34 @@ setTimeout(function(){
 
 // 游戏难度设置
 var GameDifficultySetting = {
-  $btns : $("#J_difficulty_setting .btn-default"),
-  
-  hard : myStore.get('pick-stick-hard') || StickOption.number,
+  $btns : $("#J_difficulty_setting .btn"),
   
   init : function(){
     var self = this;
     
-    StickOption.number = self.hard;
+    StickOption.number = +getHard();
     
     self.$btns.click(function(){
-      self.$btns.removeClass("btn-cur");
-      $(this).addClass("btn-cur");
+      self.$btns.removeClass("btn-solid");
+      $(this).addClass("btn-solid");
       
-      var hard = +$(this).attr("data-hard");
+      var hardType = $(this).attr("data-hardType");
       
-      StickOption.number = hard;
-      myStore.set('pick-stick-hard', hard);
+      StickOption.number = StickOption.hardType[hardType];
+      
+      myStore.set('pick-stick-hard', StickOption.number);
+      myStore.set('pick-stick-hardType', hardType);
     });
     
-    self.$btns.removeClass("btn-cur");
+    self.$btns.removeClass("btn-solid");
     
     self.$btns.each(function(){
-      if( $(this).attr("data-hard") == self.hard ){
-        $(this).addClass("btn-cur");
+      
+      if( $(this).attr("data-hardType") == getHardType() ){
+        $(this).addClass("btn-solid");
       }
     });
-    
-    
-    
+
   }
 }
 
@@ -552,12 +673,20 @@ domElem.start_game_btn.addEventListener(touchClick, function(e){
 
 // 打开设置
 domElem.setting_btn.addEventListener(touchClick, function(e){
-  pageAction.settingPage.show();
-}, false);
-
-// 关闭设置
-domElem.setting_back_btn.addEventListener(touchClick, function(e){
-  pageAction.settingPage.hide();
+  var $ico = $(this).find(".ico");
+  
+  // 关闭设置
+  if( domElem.$setting_btn_ico.hasClass('ico-setting-back') ){
+    pageAction.settingPage.hide();
+    domElem.$setting_btn_ico.removeClass('ico-setting-back');
+  }
+  
+  // 打开设置
+  else{
+    pageAction.settingPage.show();
+    domElem.$setting_btn_ico.addClass('ico-setting-back');
+  }
+  
 }, false);
 
 // 再来一局
@@ -570,8 +699,10 @@ domElem.back_to_index_btn.addEventListener(touchClick, function(e){
   pageAction.backToIndex();
 }, false);
 
-
-
+// 禁止页面滚动
+document.addEventListener('touchmove', function(e){
+  e.preventDefault();
+}, false);
 
 
 

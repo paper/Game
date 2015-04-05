@@ -364,6 +364,32 @@ var Game = {
   })
 }
 
-//Game.start();
+
+// 封面画画棍子
+function drawCoverCanvas(){
+
+  var coverCanvas = document.getElementById('coverCanvas');
+  coverCanvas.width = windowWidth;
+  coverCanvas.height = windowHeight;
+  
+  var coverCtx = coverCanvas.getContext('2d');
+  //var sticks = [];
+  
+  _.each(_.range(100), function(){
+    var left = _.random(-windowWidth, windowWidth),  
+       top = _.random(0, windowHeight), 
+       width = _.random(20, windowWidth),
+       height = 10,
+       deg = -45, 
+       n = _.random(1, 8);
+
+    var stick = new Stick(left, top, width, height, deg, n);
+    stick.draw(coverCtx);
+    //sticks.push(stick);
+  });
+  
+}
+
+drawCoverCanvas();
 
 

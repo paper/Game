@@ -1,182 +1,135 @@
 @charset "utf-8";
 
-html, body{
+.wrap{
   position:relative;
-  overflow:hidden;
-  width:100%;
-  height:100%;
-  user-select: none;
-  -webkit-user-select : none;
-  -webkit-touch-callout : none;
 }
-
-.hidden{display:none;}
-
-#myCanvas{
-  background:#fff;
-}
-
-.z, .page{
-  position:absolute;
-  top:0;
-  bottom:0;
-  overflow:hidden;
-  background:#FEE31A;
-}
-.z-a{
-  z-index:100;
-}
-.z-b{
-  z-index:99;
-}
-
 .page-menu{
   height: 32px;
-  padding:0 4px;
+  padding:0 5px;
 }
 .page-menu .back{
   float:left;
-  line-height:32px;
+  line-height:30px;
 }
-.page-menu .back a{
-  color:#000;
-  font-size:14px;
+.page-menu .back span{
+  color: #000;
+  font-size: 14px;
+  overflow: hidden;
+  position: relative;
+  padding: 0 0 0 16px;
 }
-.page-menu .back a i{}
-.page-menu .back a span{}
+.page-menu .back span i{
+  position: absolute;
+  top: -5px;
+  left: 0;
+}
+.page-menu .back span b{}
 
 .page-main{
-  padding:14px;
+  padding:12px;
 }
 
 .mod-block{
-  margin-bottom:14px;
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px dashed #d2d2d2;
+  border-radius: 10px;
 }
 .mod-block .hd{
-  margin-bottom:2px;
+  margin-bottom:10px;
 }
 .mod-block .hd h2{
-  font-size:18px;
+  font-size:14px;
 }
 .mod-block .bd{
-  margin-left:2px;
-  padding-left:12px;
-  border-left:1px solid #555;
+  
 }
 
-
-/*按钮*/
-.btn{
-  display:inline-block;
-  border-radius:30px;
-  height:34px;
-  line-height:34px;
-  width:130px;
-  font-size:14px;
-  border:0 none;
-  box-sizing: border-box;
-}
-.btn-hollow{
-  background-color:#fff;
-  color:#22BB62;
-  border:1px solid #22BB62;
-}
-.btn-solid{
-  background-color:#22BB62;
-  color:#fff;
-}
 
 /*封面*/
 .cover-page-in{
   position:absolute;
   width:100%;
   top:15%;
-  background:url(../images/hmbb.jpg) center top no-repeat;
+  z-index:2;
 }
-
+#coverCanvas{
+  pointer-events:none;
+  position:absolute;
+  left:0;
+  top:0;
+  z-index:1;
+  opacity: 0.3;
+}
 .cover-page h1 {
-  font-size: 3.5em;
+  font-size: 4.5em;
   text-align: center;
-  color: #A29E62;
-  text-shadow: 0 1px 0 #706E51;
-  margin-top:126px;
-  font-family:Tahoma;
+  color: #138E46;
+  text-shadow: 0 1px 0 #0E773A, 0 2px 0 #0E773A, 0 3px 0 #0E773A, 0 4px 0 #0E773A, 0 5px 0 #0E773A;
+  margin-top:40px;
 }
 
 .cover-page .start-game-wrap{
   text-align:center;
   margin-top:30px;
 }
-.cover-page .start-game{
+.start-game-btn{
   position:absolute;
-  bottom:50px;
+  bottom:20%;
   left:50%;
-  margin-left:-60px;
-  
+  transform: translateX(-50%);
+  -webkit-transform: translateX(-50%);
   text-align:center;
-  width:120px;
-  border:1px solid #083F57;
-  border-radius:4px;
-  padding:10px 0;
-  font-size:1.3em;
-  display:inline-block;
-  color:#222;
-  text-shadow:0 1px 0 #ccc;
-  box-shadow:0 1px 0 #eee;
-  -webkit-box-shadow:0 1px 0 #eee;
-  text-decoration:none;
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%,  color-stop(0%, #fff), color-stop(2%, #87BEE1),color-stop(3%, #54A2D3), color-stop(100%, #2C74AD));
-  background-image:-moz-linear-gradient(#fff 0%,#87BEE1 2%,#54A2D3 3%,#2C74AD 100%);
+  z-index:2;
 }
-.cover-page .start-game:active{
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%,  color-stop(0%, #fff), color-stop(2%, #87BEE1),color-stop(3%, #2C74AD), color-stop(100%, #54A2D3));
-  background-image:-moz-linear-gradient(#fff 0%,#87BEE1 2%,#2C74AD 3%,#54A2D3 100%);
-}
-
-.cover-page .setting{
-  position:absolute;
-  right:10px;
-  bottom:10px;
+.setting-btn{
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: 20px;
+  line-height: 1;
 }
 
 
 /*游戏设置*/
-.btn-cur{
-  background-color:#000;
-  color:#fff;
+.difficult-setting{}
+.difficult-setting .btn{
+  margin-right:10px;
 }
-
+  
 /*游戏*/
-
 .game-page{
   background-color:#fff;
 }
 
 
-
 /*分数*/
 .score-wrap{
   position:absolute;
-  right:5px;
-  top:5px;
+  top:0;
+  width:100%;
   z-index:100;
+  pointer-events: none;
 }
 
 .time, .score{
-  background-color:rgba(111,111,111,0.3);
-  border:2px solid rgba(1,1,1,0.3);
+  color: #6B4313;
+  position: relative;
+  font-weight: bolder;
+  font-size: 16px;
+  text-shadow: 0 1px 0px rgba(255,255,255,0.5);
 }
 
 .time{
-  line-height:1;
-  padding:5px;
-  border-radius:10px;
-  float:left;
-  color:#fff;
-  font-weight:bolder;
-  text-shadow:0 -1px 0 #000;
-  padding:3px 5px;
-  margin-right:-5px;
+  padding: 0 0 0 25px;
+  float: left;
+  margin: 10px 0 0 10px;
+}
+.time .ico-clock{
+  left:0;
+  top:0;
+  position:absolute;
 }
 .time span{
   line-height:1;
@@ -184,15 +137,15 @@ html, body{
 }
 .score{
   float:right;
-  width:50px;
-  height:50px;
-  line-height:50px;
-  text-align:center;
-  border-radius:50%;
-  font-size:1.6em;
-  text-shadow:0 1px 0 #fff;
-  color:#333;
-  font-weight:bolder;
+  padding: 0px 0 0 30px;
+  margin: 10px 10px 0 0;
+  font-size:26px;
+  line-height: 1;
+}
+.score .ico-stick{
+  left:0;
+  top:6px;
+  position:absolute
 }
 
 /*游戏结束时的提示*/
@@ -205,12 +158,17 @@ html, body{
   width: 86%;
   margin: 0 auto;
   position: relative;
-  top: 50%;
+  top: -50%;
   transform: translateY(-50%);
   -webkit-transform: translateY(-50%);
   border-radius: 20px;
   overflow: hidden;
+  
+  transition: all 0.3s ease 0s;
+  -webkit-transition: all 0.3s ease 0s;
+  -moz-transition: all 0.3s ease 0s;
 }
+
 .game-success-tip-box-hd{
   background-color:#22BB62;
 }
@@ -220,6 +178,7 @@ html, body{
   height: 50px;
   line-height: 50px;
   font-size: 24px;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.3);
 }
 .game-success-tip-box-bd{
   padding: 14px 10px;
@@ -235,10 +194,17 @@ html, body{
   float:left;
   text-align:center;
   width:50%;
-  font-size:28px;
+  font-size:24px; 
 }
-.game-success-tip-box-bd .game-data ul li h6{}
+.game-success-tip-box-bd .game-data ul li h6{
+  font-size:26px;
+  color:#148945;
+}
 .game-success-tip-box-bd .game-data ul li p{}
+.game-success-tip-box-bd .game-data ul li p span,
+.game-success-tip-box-bd .game-data ul li p strong{
+  margin:0 2px;
+}
 
 .game-success-tip-box-bd .btn-wrap{
   text-align:center;
@@ -253,6 +219,9 @@ html, body{
   width:90%;
 }
 
+.game-success-tip-box-show{
+  top: 48%;
+}
 
 
 

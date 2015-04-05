@@ -6,9 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
   <meta name="format-detection" content="telephone=no" />
   
-  <link href='http://www.youziku.com/webfont/NameCSS/30419' rel='stylesheet' type='text/css'/>
-  
   <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/ps.css">
   <script src="js/underscore.min.js"></script>
   <script src="js/zepto.min-1.1.4.js"></script>
@@ -18,65 +17,61 @@
   <div class="wrap">
     
     <div class="z z-a" id="J_za">
+      
+      <span class="setting-btn" id="J_setting_btn">
+        <i class="ico ico-setting"></i>
+      </span>
     
       <!--封面-->
       <div class="cover-page page" id="J_cover_page">
         <div class="cover-page-in">
-          <h1>PickSticks</h1>
+          <h1 class="spw">PickSticks</h1>
         </div>
+
+        <a href="###" class="start-game-btn" id="J_start_game_btn">
+          <button type="button" class="btn btn-solid btn-big" >Play</button>
+        </a>
         
-        <button type="button" class="start-game" id="J_start_game_btn">Play</button>
-        
-        <a href="javascript:;" class="setting" id="J_setting_btn">setting</a>
+        <canvas id="coverCanvas" width="320" height="480"></canvas>
       </div>
       <!--/封面-->
       
       <!--设置-->
       <div class="setting-page page" id="J_setting_page">
-      
-        <div class="page-menu">
-        
-          <div class="back">
-            <a href="javascript:;" id="J_setting_back_btn" data-p="J_setting_page">
-              <i>X</i><span>Close</span>
-             </a>
-          </div>
-          
-        </div>
         
         <div class="page-main">
           <div class="page-main-in">
           
             <div class="mod-block">
               <div class="hd">
-                <h2>说明</h2>
+                <h2>游戏说明</h2>
               </div>
               <div class="bd">
                 <p>玩家通过点击，让最上面的棍子消失，点中加1分，误点扣1分。比拼谁用更少的时间，点中更多的棍子。</p>
               </div>
             </div>
             
-            <div class="mod-block">
+            <div class="mod-block" id="J_my_score">
               <div class="hd">
                 <h2>我的成绩</h2>
               </div>
               <div class="bd">
-                <p>简易：0秒 / 0棍</p>
-                <p>普通：0秒 / 0棍</p>
-                <p>噩梦：0秒 / 0棍</p>
+                <p class="easy">简易：0棍 / 0秒</p>
+                <p class="normal">普通：0棍 / 0秒</p>
+                <p class="hard">噩梦：0棍 / 0秒</p>
               </div>
             </div>
             
-            <div class="mod-block" id="J_difficulty_setting">
+            <div class="mod-block difficult-setting" id="J_difficulty_setting">
               <div class="hd">
                 <h2>难度设置</h2>
               </div>
               <div class="bd">
                 
                 <div class="btn-group">
-                  <button data-hard="10" type="button" class="btn btn-default btn-cur">简易</button>
-                  <button data-hard="30" type="button" class="btn btn-default">普通</button>
-                  <button data-hard="50" type="button" class="btn btn-default">噩梦</button>
+                  <button data-hardType="easy" type="button" class="btn btn-mini btn-hollow">简易</button>
+                  <button data-hardType="normal" type="button" class="btn btn-mini btn-hollow">普通</button>
+                  <button data-hardType="hard" type="button" class="btn btn-mini btn-hollow">噩梦</button>
                 </div>
                 
               </div>
@@ -99,17 +94,17 @@
           
           <div class="game-success-tip-box">
             <div class="game-success-tip-box-hd">
-              <h4 class="css30419">Victory</h4>
+              <h4 class="spw">Victory</h4>
             </div>
             
             <div class="game-success-tip-box-bd">
               <div class="game-data">
                 <ul>
-                  <li>
+                  <li class="score-item">
                     <h6>Score</h6>
-                    <p>20<strong>/30</strong></p>
+                    <p><span>20</span>/<strong>30</strong></p>
                   </li>
-                  <li>
+                  <li class="time-item">
                     <h6>Time</h6>
                     <p>114.6s</p>
                   </li>
@@ -122,19 +117,17 @@
               </div>
             </div>
           </div>
-          
-          
-          
-          
-          
+ 
         </div>
         
         <div class="score-wrap" id="J_score_wrap">
           <div class="time">
+            <i class="ico ico-clock"></i>
             <span id="J_time_sec">0</span>.<span id="J_time_msec">0</span>s
           </div>
           
           <div class="score">
+            <i class="ico ico-stick"></i>
             <span id="J_score">0</span>
           </div>
         </div>
@@ -150,5 +143,8 @@
   <script src="js/stick.js"></script>
   <script src="js/circle.js"></script>
   <script src="js/core.js"></script>
+  
+  <link href='http://www.youziku.com/webfont/NameCSS/34374' rel='stylesheet' type='text/css'/>
+  
 </body>
 </html>

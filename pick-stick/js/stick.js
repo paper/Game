@@ -66,25 +66,27 @@ Stick.create = function(){
   
 };
 
-Stick.prototype.draw = function(){
-  ctx.save();
+Stick.prototype.draw = function(context){  
+  var ctx2 = context || ctx;
+  
+  ctx2.save();
   
   // 偏移，旋转，偏移
-  ctx.translate(this.x, this.y);
-  ctx.rotate(this.rad);
-  ctx.translate(-this.x, -this.y);
+  ctx2.translate(this.x, this.y);
+  ctx2.rotate(this.rad);
+  ctx2.translate(-this.x, -this.y);
   
   // 加阴影
-  ctx.shadowOffsetX = 0;
-  ctx.shadowOffsetY = 0;
-  ctx.shadowColor = '#000';
-  ctx.shadowBlur = 3;
+  ctx2.shadowOffsetX = 0;
+  ctx2.shadowOffsetY = 0;
+  ctx2.shadowColor = '#000';
+  ctx2.shadowBlur = 3;
   
   // 加渐变
-  ctx.fillStyle = getLinearGradientStyle(this.left, this.top, this.left, this.top+this.height, this.n);
-  ctx.fillRect(this.left, this.top, this.width, this.height ); 
+  ctx2.fillStyle = getLinearGradientStyle(this.left, this.top, this.left, this.top+this.height, this.n);
+  ctx2.fillRect(this.left, this.top, this.width, this.height ); 
   
-  ctx.restore();
+  ctx2.restore();
   
   return this;
 };
