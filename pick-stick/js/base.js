@@ -18,9 +18,7 @@ var round = Math.round;
 /**==================================================
   基本浏览器判断和方法
 =====================================================*/
-var isMobile = (function(){
-  return /Android|Windows Phone|iPhone|iPod/i.test(navigator.userAgent);
-})();
+var isMobile = /Android|Windows Phone|iPhone|iPod/i.test(navigator.userAgent);
 
 var touchClick = isMobile ? 'touchstart' : 'click';
 
@@ -48,8 +46,6 @@ var StickOption = {
   // 棍子的数量
   number : 2,
   
-  //hardType : [ ['easy', 2], ['normal', 30], ['hard', 50] ],
-  
   hardType : {
     'easy' : 2,
     'normal' : 5,
@@ -58,7 +54,7 @@ var StickOption = {
   
   hardTypeMsg : {
     'easy' : '简易',
-    'normal' : '困难',
+    'normal' : '普通',
     'hard' : '噩梦'
   },
   
@@ -196,13 +192,6 @@ function domReady(func){
   }, false);
 }
 
-// 禁止页面滚动
-function stopDragPage(){
-  document.addEventListener('touchmove', function(e){
-    e.preventDefault();
-  }, false);
-}
-
 function setStyle(elem, obj){
   for(var i in obj){
     if( obj.hasOwnProperty(i) ){
@@ -225,7 +214,7 @@ function isNumeric(obj){
   return typeof obj === 'number' && obj - parseFloat( obj ) >= 0;
 }
 
-function clearCanvas(context){
+function clearCanvas(){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
@@ -442,6 +431,7 @@ function getLineBoxAcrossCoordinate(x, y, rad, box_w, box_h){
 
 /*常用dom*/
 var domElem = {
+  
   za : document.getElementById("J_za"),
   zb : document.getElementById("J_zb"),
   
@@ -562,7 +552,7 @@ var pageAction = {
       show(domElem.game_success_tip);
       setTimeout(function(){
         domElem.$tipBox.addClass('game-success-tip-box-show');
-      }, 10);
+      }, 100);
     },
     
     hide : function(){
@@ -617,6 +607,7 @@ loadStyle('\
   }\
 ');
 
+// 这里之所以要延迟添加 transition，就是因为上面的宽高是动态添加的
 setTimeout(function(){
   loadStyle('\
     .z, .page{\
@@ -637,7 +628,7 @@ var GameDifficultySetting = {
     
     StickOption.number = +getHard();
     
-    self.$btns.click(function(){
+    self.$btns.on(touchClick, function(){
       self.$btns.removeClass("btn-solid");
       $(this).addClass("btn-solid");
       
@@ -700,13 +691,21 @@ domElem.back_to_index_btn.addEventListener(touchClick, function(e){
 }, false);
 
 // 禁止页面滚动
-document.addEventListener('touchmove', function(e){
+document.body.addEventListener('touchmove', function(e){
   e.preventDefault();
 }, false);
 
+// fix 微信快速点击2次
+document.body.addEventListener('touchstart', function(e){
+  e.preventDefault();
+}, false);
 
+// 判断横竖屏
+var changeEvt = "onorientationchange" in window ? "orientationchange" : "resize";
 
-
+window.addEventListener(changeEvt, function(){
+  location.reload();
+}, false);
 
 
 
