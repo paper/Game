@@ -47,9 +47,9 @@ var StickOption = {
   number : 2,
   
   hardType : {
-    'easy' : 2,
-    'normal' : 5,
-    'hard' : 10
+    'easy' : 10,
+    'normal' : 20,
+    'hard' : 40
   },
   
   hardTypeMsg : {
@@ -216,6 +216,34 @@ function isNumeric(obj){
 
 function clearCanvas(){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function fadeOut(dom, callback){
+  dom = typeof dom == 'string' ? document.getElementById(dom) : dom;
+  var cur = 1;
+  var step = 0.1;
+  
+  function fn(){
+    
+    if( cur < 0  ){
+      callback && callback(dom);
+      return;
+    }
+    
+    cur -= step;
+    
+    dom.style.opacity = cur;
+    
+    setTimeout(function(){
+      
+      fn();
+      
+    }, 50);
+    
+  }
+  
+  fn();
+  
 }
 
 /**
@@ -550,9 +578,8 @@ var pageAction = {
       self.record( hardType, stick, parseFloat(time));
       
       show(domElem.game_success_tip);
-      setTimeout(function(){
-        domElem.$tipBox.addClass('game-success-tip-box-show');
-      }, 100);
+      
+      domElem.$tipBox.addClass('game-success-tip-box-show');
     },
     
     hide : function(){
@@ -707,5 +734,14 @@ window.addEventListener(changeEvt, function(){
   location.reload();
 }, false);
 
+window.addEventListener('load', function(){
+  
+  setTimeout(function(){
+    fadeOut('J_game_loading', function(d){
+      $(d).remove();
+    });
+  }, 1000);
+  
+}, false);
 
 
