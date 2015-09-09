@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>1秒</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+  <meta name="format-detection" content="telephone=no" />
+  <style>
+    *{margin:0; padding: 0;}
+    html, body{
+      user-select: none;
+      touch-callout : none;
+      -webkit-user-select : none;
+      -webkit-touch-callout : none;
+    }
+    .your-time{
+        text-align: center;
+        margin-top: 120px;
+        color: #666;
+    }
+    .time{
+        font-weight: bold;
+        margin: 0 4px;
+        font-size: 22px;
+        color: #000;
+    }
+    .btn-wrap{
+        margin-top: 40px;
+        text-align: center;
+    }
+    .btn,
+    .btn-active{
+        width: 140px;
+        height: 140px;
+        line-height: 140px;
+        background: red;
+        color: #fff;
+        text-align: center;
+        margin: 0 auto;
+        border-radius: 50%;
+        position: relative;
+        overflow: hidden;
+    }
+    .btn-active{
+        background: blue;
+    }
+    .footer{
+        position: fixed;
+        width: 100%;
+        bottom: 10px;
+        text-align: center;
+        color: #999;
+        font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+    <div class="wrap">
+        
+        
+        <div class="your-time">
+            <span>你的时间是:</span>
+            <span id="J_time" class="time">0.000</span>秒
+        </div>
+        <div class="btn-wrap">
+            <div class="btn" id="J_btn">
+                <span>按我</span>
+            </div>
+        </div>
+    
+        <div class="footer">
+            copyright &copy; binjue
+        </div>
+    </div>
+    <script>
+        var isMobile = /Android|Windows Phone|iPhone|iPod|iPad/i.test(navigator.userAgent);
+        var touchDown = isMobile ? 'touchstart' : 'mousedown';
+        var touchUp = isMobile ? 'touchend' : 'mouseup'
+        var time = document.getElementById("J_time");
+        var btn = document.getElementById("J_btn");
+        var t1, t2;
+        var ret, cha;
+        var msg;
+        function stopDefault(e) {    
+            if(e && e.preventDefault) {   
+            　　e.preventDefault();  
+            } else {   
+            　　window.event.returnValue = false;   
+            }  
+            return false;  
+        }
+        btn.addEventListener(touchDown, function(e){
+            stopDefault(e);
+            btn.className = "btn-active";
+            t1 = +new Date();
+        }, false);
+        btn.addEventListener(touchUp, function(){
+            btn.className = "btn";
+            t2 = +new Date();
+            ret = parseFloat( (t2 - t1)/1000 ).toFixed(3);
+            document.title = "你按下的时间是：" + ret + "秒！";
+            time.innerHTML = ret;
+        }, false);
+    </script>
+</body>
+</html>
