@@ -1,0 +1,282 @@
+@charset "utf-8";
+
+/*game loading*/
+.game-loading{
+  position: absolute;
+  z-index: 2;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  background: #fff;
+}
+
+.game-loading div{
+  margin-top:50%;
+  margin-bottom:20px;
+}
+.game-loading p{
+  text-align:center;
+  color:#0097FB;
+}
+
+.wrap{
+  position:relative;
+  z-index:1;
+  width:100%;
+  height:100%;
+}
+
+
+.page-menu{
+  height: 32px;
+  padding:0 5px;
+}
+.page-menu .back{
+  float:left;
+  line-height:30px;
+}
+.page-menu .back span{
+  color: #000;
+  font-size: 14px;
+  overflow: hidden;
+  position: relative;
+  padding: 0 0 0 16px;
+}
+.page-menu .back span i{
+  position: absolute;
+  top: -5px;
+  left: 0;
+}
+.page-menu .back span b{}
+
+.page-main{
+  padding:12px;
+}
+
+.mod-block{
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px dashed #d2d2d2;
+  border-radius: 10px;
+}
+.mod-block .hd{
+  margin-bottom:10px;
+}
+.mod-block .hd h2{
+  font-size:14px;
+}
+.mod-block .bd{
+  
+}
+
+
+/*封面*/
+.cover-page-in{
+  position:absolute;
+  width:100%;
+  top:15%;
+  z-index:2;
+}
+#coverCanvas{
+  pointer-events:none;
+  position:absolute;
+  left:0;
+  top:0;
+  z-index:1;
+  opacity: 0.3;
+}
+.cover-page h1 {
+  font-size: 4.5em;
+  text-align: center;
+  color: #138E46;
+  text-shadow: 0 1px 0 #0E773A, 0 2px 0 #0E773A, 0 3px 0 #0E773A, 0 4px 0 #0E773A, 0 5px 0 #0E773A;
+  margin-top:40px;
+}
+
+.cover-page .start-game-wrap{
+  text-align:center;
+  margin-top:30px;
+}
+.start-game-btn{
+  position:absolute;
+  bottom:20%;
+  left:50%;
+  transform: translateX(-50%);
+  -webkit-transform: translateX(-50%);
+  text-align:center;
+  z-index:2;
+}
+.setting-btn{
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: 20px;
+  line-height: 1;
+}
+
+
+/*游戏设置*/
+.difficult-setting{}
+.difficult-setting .btn{
+  margin-right:10px;
+}
+  
+/*游戏*/
+.game-page{
+  background-color:#fff;
+}
+
+
+/*分数*/
+.score-wrap{
+  position:absolute;
+  top:0;
+  width:100%;
+  z-index:100;
+  pointer-events: none;
+}
+
+.time, .score{
+  color: #6B4313;
+  position: relative;
+  font-weight: bolder;
+  font-size: 16px;
+  text-shadow: 0 1px 0px rgba(255,255,255,0.5);
+}
+
+.time{
+  padding: 0 0 0 25px;
+  float: left;
+  margin: 10px 0 0 10px;
+}
+.time .ico-clock{
+  left:0;
+  top:0;
+  position:absolute;
+}
+.time span{
+  line-height:1;
+  padding:0 2px;
+}
+.score{
+  float:right;
+  padding: 0px 0 0 30px;
+  margin: 10px 10px 0 0;
+  font-size:26px;
+  line-height: 1;
+}
+.score .ico-stick{
+  left:0;
+  top:6px;
+  position:absolute
+}
+
+/*游戏结束时的提示*/
+.game-success-tip{
+  height:100%;
+}
+
+.game-success-tip-box{
+  border: 4px solid #1B984F;
+  width: 85%;
+  margin: 0 auto;
+  position: relative;
+  top: -50%;
+  transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  border-radius: 20px;
+  overflow: hidden;
+  
+  transition: all 0.3s ease 0s;
+  -webkit-transition: all 0.3s ease 0s;
+  -moz-transition: all 0.3s ease 0s;
+}
+
+.game-success-tip-box-hd{
+  background-color:#22BB62;
+}
+.game-success-tip-box-hd h4{
+  text-align:center;
+  color:#fff;
+  height: 50px;
+  line-height: 50px;
+  font-size: 24px;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+}
+.game-success-tip-box-bd{
+  padding: 14px 10px;
+  background-color: #fff;
+}
+.game-success-tip-box-bd .game-data{
+  padding: 10px 0 20px;
+}
+.game-success-tip-box-bd .game-data ul{
+  overflow:hidden;
+}
+.game-success-tip-box-bd .game-data ul li{
+  float:left;
+  text-align:center;
+  width:50%;
+  font-size:24px; 
+}
+.game-success-tip-box-bd .game-data ul li h6{
+  font-size:26px;
+  color:#148945;
+}
+.game-success-tip-box-bd .game-data ul li p{}
+.game-success-tip-box-bd .game-data ul li p span,
+.game-success-tip-box-bd .game-data ul li p strong{
+  margin:0 2px;
+}
+
+.game-success-tip-box-bd .btn-wrap{
+  text-align:center;
+  overflow:hidden;
+}
+.game-success-tip-box-bd .btn-wrap div{
+  width:50%;
+  float:left;
+  text-align:center;
+}
+.game-success-tip-box-bd .btn-wrap .btn{
+  width:90%;
+}
+
+.game-success-tip-box-show{
+  top: 48% !important;
+}
+
+
+/* 
+  移动端
+  height <= 320
+*/
+@media screen and (max-height: 360px) {
+  .page-main {
+    padding: 6px;
+  }
+  
+  .mod-block {
+    margin-bottom: 6px;
+    padding: 6px;
+  }
+  
+  .mod-block .hd{
+    margin-bottom:6px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
